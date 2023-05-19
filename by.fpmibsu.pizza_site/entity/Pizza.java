@@ -1,4 +1,6 @@
 package entity;
 
-public record Pizza(String name, String description, int price) {
+import java.util.List;
+
+public record Pizza(int id, String name, List<Ingredient> ingredients, int price) {
 }
