@@ -1,4 +1,4 @@
-package entity;
+package by.fpmibsu.pizza_site.entity;
 
 import java.util.List;
 
