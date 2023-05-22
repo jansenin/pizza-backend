@@ -11,7 +11,7 @@ public class IngredientDao implements IngredientDaoInterface {
     private static final String SQL_SELECT_ALL_INGREDIENTS = "SELECT * FROM ingredients;";
     private static final String SQL_SELECT_INGREDIENT_BY_ID = "SELECT * FROM ingredients WHERE ingredient_id = ?";
     private static final String SQL_SELECT_INGREDIENT_BY_NAME = "SELECT * FROM ingredients WHERE name = ?";
-    private static final String SQL_UPDATE_INGREDIENT = "UPDATE ingredients SET ingredient_id = ? + name = ? WHERE ingredient_id = ?";
+    private static final String SQL_UPDATE_INGREDIENT = "UPDATE ingredients SET ingredient_id = ?, name = ? WHERE ingredient_id = ?";
     private static final String SQL_DELETE_INGREDIENT_BY_ID = "DELETE FROM ingredients WHERE ingredient_id = ?";
     private static final String SQL_DELETE_INGREDIENT_BY_NAME = "DELETE FROM ingredients WHERE ingredient_id = ?";
     private static final String SQL_INSERT_INGREDIENT = "INSERT INTO ingredients VALUES (?, ?)";
@@ -25,8 +25,9 @@ public class IngredientDao implements IngredientDaoInterface {
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(SQL_SELECT_ALL_INGREDIENTS);
             while (resultSet.next()) {
-                Ingredient ingredient = new Ingredient(resultSet.getInt("ingredient_id"), resultSet.getString("name"), 0);
-                ingredients.add(ingredient);
+                int id = resultSet.getInt("ingredient_id");
+                String name = resultSet.getString("name");
+                ingredients.add(new Ingredient(id, name, 0));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -39,11 +40,10 @@ public class IngredientDao implements IngredientDaoInterface {
     @Override
     public Ingredient findIngredientById(int id) throws DaoException {
         Connection connection = null;
-        PreparedStatement statement;
         String name = null;
         try {
             connection = ConnectionCreator.createConnection();
-            statement = connection.prepareStatement(SQL_SELECT_INGREDIENT_BY_ID);
+            PreparedStatement statement = connection.prepareStatement(SQL_SELECT_INGREDIENT_BY_ID);
             statement.setInt(1, id);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
@@ -61,11 +61,10 @@ public class IngredientDao implements IngredientDaoInterface {
     @Override
     public Ingredient findIngredientByName(String name) throws DaoException {
         Connection connection = null;
-        PreparedStatement statement;
         int id = 0;
         try {
             connection = ConnectionCreator.createConnection();
-            statement = connection.prepareStatement(SQL_SELECT_INGREDIENT_BY_NAME);
+            PreparedStatement statement = connection.prepareStatement(SQL_SELECT_INGREDIENT_BY_NAME);
             statement.setString(1, name);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
@@ -83,10 +82,9 @@ public class IngredientDao implements IngredientDaoInterface {
     @Override
     public Ingredient update(Ingredient ingredient) throws DaoException {
         Connection connection = null;
-        PreparedStatement statement;
         try {
             connection = ConnectionCreator.createConnection();
-            statement = connection.prepareStatement(SQL_UPDATE_INGREDIENT);
+            PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_INGREDIENT);
 
             statement.setInt(1, ingredient.id());
             statement.setString(2, ingredient.name());
@@ -103,11 +101,10 @@ public class IngredientDao implements IngredientDaoInterface {
     @Override
     public boolean deleteByIngredient(Ingredient ingredient) throws DaoException {
         Connection connection = null;
-        PreparedStatement statement;
         int updateRowsCount;
         try {
             connection = ConnectionCreator.createConnection();
-            statement = connection.prepareStatement(SQL_DELETE_INGREDIENT_BY_ID);
+            PreparedStatement statement = connection.prepareStatement(SQL_DELETE_INGREDIENT_BY_ID);
             statement.setInt(1, ingredient.id());
             updateRowsCount = statement.executeUpdate();
         } catch (SQLException e) {
@@ -121,11 +118,10 @@ public class IngredientDao implements IngredientDaoInterface {
     @Override
     public boolean deleteById(int id) throws DaoException {
         Connection connection = null;
-        PreparedStatement statement;
         int updateRowsCount;
         try {
             connection = ConnectionCreator.createConnection();
-            statement = connection.prepareStatement(SQL_DELETE_INGREDIENT_BY_ID);
+            PreparedStatement statement = connection.prepareStatement(SQL_DELETE_INGREDIENT_BY_ID);
             statement.setInt(1, id);
             updateRowsCount = statement.executeUpdate();
         } catch (SQLException e) {
@@ -139,11 +135,10 @@ public class IngredientDao implements IngredientDaoInterface {
     @Override
     public boolean deleteByName(String name) throws DaoException {
         Connection connection = null;
-        PreparedStatement statement;
         int updateRowsCount;
         try {
             connection = ConnectionCreator.createConnection();
-            statement = connection.prepareStatement(SQL_DELETE_INGREDIENT_BY_NAME);
+            PreparedStatement statement = connection.prepareStatement(SQL_DELETE_INGREDIENT_BY_NAME);
             statement.setString(1, name);
             updateRowsCount = statement.executeUpdate();
         } catch (SQLException e) {
@@ -157,11 +152,10 @@ public class IngredientDao implements IngredientDaoInterface {
     @Override
     public boolean insert(Ingredient ingredient) throws DaoException {
         Connection connection = null;
-        PreparedStatement statement;
         int updateRowsCount;
         try {
             connection = ConnectionCreator.createConnection();
-            statement = connection.prepareStatement(SQL_INSERT_INGREDIENT);
+            PreparedStatement statement = connection.prepareStatement(SQL_INSERT_INGREDIENT);
             statement.setInt(1, ingredient.id());
             statement.setString(2, ingredient.name());
             updateRowsCount = statement.executeUpdate();
