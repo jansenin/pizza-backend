@@ -6,6 +6,7 @@ import java.util.List;
 
 public interface IngredientDaoInterface extends DaoInterface {
     List<Ingredient> findAll() throws DaoException;
+    List<Ingredient> findAllForPizza(int pizza_id) throws DaoException;
     Ingredient findIngredientById(int id) throws DaoException;
     Ingredient findIngredientByName(String name) throws DaoException;
     Ingredient update(Ingredient ingredient) throws DaoException;
