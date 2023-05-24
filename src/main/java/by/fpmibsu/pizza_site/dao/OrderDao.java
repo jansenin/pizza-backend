@@ -107,12 +107,6 @@ public class OrderDao implements OrderDaoInterface {
         }
         return order;
     }
-
-    @Override
-    public boolean deleteByOrder(Order order) throws DaoException {
-        return deleteById(order.id());
-    }
-
     @Override
     public boolean deleteById(int id) throws DaoException {
         Connection connection = null;

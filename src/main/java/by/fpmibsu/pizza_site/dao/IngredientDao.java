@@ -123,12 +123,6 @@ public class IngredientDao implements IngredientDaoInterface {
         }
         return ingredient;
     }
-
-    @Override
-    public boolean deleteByIngredient(Ingredient ingredient) throws DaoException {
-        return deleteById(ingredient.id());
-    }
-
     @Override
     public boolean deleteById(int id) throws DaoException {
         Connection connection = null;

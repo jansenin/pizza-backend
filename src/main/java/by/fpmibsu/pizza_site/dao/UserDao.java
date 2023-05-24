@@ -126,23 +126,6 @@ public class UserDao implements UserDaoInterface {
     }
 
     @Override
-    public boolean deleteByUser(User user) throws DaoException {
-        Connection connection = null;
-        int updateRowsCount;
-        try {
-            connection = ConnectionCreator.createConnection();
-            PreparedStatement statement = connection.prepareStatement(SQL_DELETE_USER_BY_ID);
-            statement.setInt(1, user.id());
-            updateRowsCount = statement.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } finally {
-            close(connection);
-        }
-        return updateRowsCount > 0;
-    }
-
-    @Override
     public boolean deleteById(int id) throws DaoException {
         Connection connection = null;
         int updateRowsCount;

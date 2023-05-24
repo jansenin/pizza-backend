@@ -13,7 +13,6 @@ public interface PizzaDaoInterface extends DaoInterface {
     Pizza update(Pizza pizza) throws DaoException;
     boolean addIngredientInPizza(Pizza pizza, Ingredient ingredient) throws DaoException;
     boolean removeIngredientFromPizza(Pizza pizza, Ingredient ingredient) throws DaoException;
-    boolean deleteByPizza(Pizza pizza) throws DaoException;
     boolean deleteById(int id) throws DaoException;
     boolean deleteByName(String name) throws DaoException;
     boolean insert(Pizza pizza) throws DaoException;

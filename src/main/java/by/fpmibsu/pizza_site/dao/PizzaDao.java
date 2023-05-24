@@ -190,11 +190,6 @@ public class PizzaDao implements PizzaDaoInterface {
     }
 
     @Override
-    public boolean deleteByPizza(Pizza pizza) throws DaoException {
-        return deleteById(pizza.id());
-    }
-
-    @Override
     public boolean deleteById(int id) throws DaoException {
         Connection connection = null;
         int updateRowsCount;
@@ -247,7 +242,7 @@ public class PizzaDao implements PizzaDaoInterface {
                     statement = connection.prepareStatement(SQL_INSERT_INGREDIENT_IN_PIZZA);
                     statement.setInt(1, id);
                     statement.setInt(2, i.id());
-                    statement.executeQuery();
+                    statement.executeUpdate();
                 }
             }
         } catch (SQLException e) {
