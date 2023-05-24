@@ -230,7 +230,7 @@ public class PizzaDao implements PizzaDaoInterface {
 
     @Override
     public boolean insert(Pizza pizza) throws DaoException {
-        if (findPizzaByName(pizza.name()).id() != 0) {
+        if (findPizzaByName(pizza.name()) != null) {
             return false;
         }
         Connection connection = null;
@@ -241,10 +241,11 @@ public class PizzaDao implements PizzaDaoInterface {
             statement.setString(1, pizza.name());
             statement.setInt(2, pizza.price());
             updateRowsCount = statement.executeUpdate();
+            int id = findPizzaByName(pizza.name()).id();
             if (updateRowsCount > 0) {
                 for (var i : pizza.ingredients()) {
                     statement = connection.prepareStatement(SQL_INSERT_INGREDIENT_IN_PIZZA);
-                    statement.setInt(1, pizza.id());
+                    statement.setInt(1, id);
                     statement.setInt(2, i.id());
                     statement.executeQuery();
                 }

@@ -161,7 +161,7 @@ public class UserDao implements UserDaoInterface {
 
     @Override
     public boolean insert(UserRole role, String password, String login) throws DaoException {
-        if (findUserByLogin(login).id() != 0) {
+        if (findUserByLogin(login) != null) {
             return false;
         }
         Connection connection = null;
