@@ -5,11 +5,11 @@ import by.fpmibsu.pizza_site.entity.User;
 
 import java.util.List;
 
-public interface OrderDaoInterface extends DaoInterface {
-    List<Order> findAll() throws DaoException;
-    List<Order> findAllUserOrders(User user) throws DaoException;
-    Order findOrderById(int id) throws DaoException;
-    Order update(Order order) throws DaoException;
-    boolean deleteById(int id) throws DaoException;
-    boolean insert(Order order) throws DaoException;
+public interface OrderDaoInterface {
+    List<Order> findAll();
+    List<Order> findAllUserOrders(User user);
+    Order findOrderById(int id);
+    Order update(Order order);
+    boolean deleteById(int id);
+    boolean insert(Order order);
 }

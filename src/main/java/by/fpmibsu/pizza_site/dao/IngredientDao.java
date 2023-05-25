@@ -1,6 +1,5 @@
 package by.fpmibsu.pizza_site.dao;
 
-import by.fpmibsu.pizza_site.database.ConnectionCreator;
 import by.fpmibsu.pizza_site.entity.Ingredient;
 
 import java.sql.*;
@@ -8,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class IngredientDao implements IngredientDaoInterface {
+    private final Connection connection;
     private static final String SQL_SELECT_ALL_INGREDIENTS = "SELECT * FROM ingredients;";
     private static final String SQL_SELECT_INGREDIENT_BY_ID = "SELECT * FROM ingredients WHERE ingredient_id = ?";
     private static final String SQL_SELECT_INGREDIENT_BY_NAME = "SELECT * FROM ingredients WHERE name = ?";
@@ -20,12 +20,14 @@ public class IngredientDao implements IngredientDaoInterface {
             "INNER JOIN pizzas USING(pizza_id) " +
             "WHERE pizza_id = ? ";
 
+    public IngredientDao(Connection connection) {
+        this.connection = connection;
+    }
+
     @Override
-    public List<Ingredient> findAll() throws DaoException {
+    public List<Ingredient> findAll() {
         List<Ingredient> ingredients = new ArrayList<>();
-        Connection connection = null;
         try {
-            connection = ConnectionCreator.createConnection();
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(SQL_SELECT_ALL_INGREDIENTS);
             while (resultSet.next()) {
@@ -35,18 +37,14 @@ public class IngredientDao implements IngredientDaoInterface {
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
-        } finally {
-            close(connection);
         }
         return ingredients;
     }
 
     @Override
-    public List<Ingredient> findAllForPizza(int pizza_id) throws DaoException {
+    public List<Ingredient> findAllForPizza(int pizza_id) {
         List<Ingredient> ingredients = new ArrayList<>();
-        Connection connection = null;
         try {
-            connection = ConnectionCreator.createConnection();
             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL_INGREDIENTS_IN_PIZZA);
             statement.setInt(1, pizza_id);
             ResultSet resultSet = statement.executeQuery();
@@ -57,18 +55,14 @@ public class IngredientDao implements IngredientDaoInterface {
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
-        } finally {
-            close(connection);
         }
         return ingredients;
     }
 
     @Override
-    public Ingredient findIngredientById(int id) throws DaoException {
-        Connection connection = null;
+    public Ingredient findIngredientById(int id) {
         Ingredient ingredient = null;
         try {
-            connection = ConnectionCreator.createConnection();
             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_INGREDIENT_BY_ID);
             statement.setInt(1, id);
             ResultSet resultSet = statement.executeQuery();
@@ -79,18 +73,14 @@ public class IngredientDao implements IngredientDaoInterface {
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
-        } finally {
-            close(connection);
         }
         return ingredient;
     }
 
     @Override
-    public Ingredient findIngredientByName(String name) throws DaoException {
-        Connection connection = null;
+    public Ingredient findIngredientByName(String name) {
         Ingredient ingredient = null;
         try {
-            connection = ConnectionCreator.createConnection();
             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_INGREDIENT_BY_NAME);
             statement.setString(1, name);
             ResultSet resultSet = statement.executeQuery();
@@ -101,83 +91,67 @@ public class IngredientDao implements IngredientDaoInterface {
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
-        } finally {
-            close(connection);
         }
         return ingredient;
     }
 
     @Override
-    public Ingredient update(Ingredient ingredient) throws DaoException {
+    public Ingredient update(Ingredient ingredient) {
         Ingredient idCheckIngredient = findIngredientById(ingredient.getId());
         Ingredient nameCheckIngredient = findIngredientByName(ingredient.getName());
         if (idCheckIngredient == null || (nameCheckIngredient != null && nameCheckIngredient.getId() != ingredient.getId())) {
             ingredient.setId(Ingredient.ID_NOT_DEFINED);
             return ingredient;
         }
-        Connection connection = null;
         try {
-            connection = ConnectionCreator.createConnection();
             PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_INGREDIENT);
             statement.setString(1, ingredient.getName());
             statement.setInt(2, ingredient.getId());
             statement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
-        } finally {
-            close(connection);
         }
         return ingredient;
     }
 
     @Override
-    public boolean deleteByIngredient(Ingredient ingredient) throws DaoException {
+    public boolean deleteByIngredient(Ingredient ingredient) {
         return deleteById(ingredient.getId());
     }
 
     @Override
-    public boolean deleteById(int id) throws DaoException {
-        Connection connection = null;
+    public boolean deleteById(int id) {
         int updateRowsCount;
         try {
-            connection = ConnectionCreator.createConnection();
             PreparedStatement statement = connection.prepareStatement(SQL_DELETE_INGREDIENT_BY_ID);
             statement.setInt(1, id);
             updateRowsCount = statement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
-        } finally {
-            close(connection);
         }
         return updateRowsCount > 0;
     }
 
     @Override
-    public boolean deleteByName(String name) throws DaoException {
-        Connection connection = null;
+    public boolean deleteByName(String name) {
         int updateRowsCount;
         try {
-            connection = ConnectionCreator.createConnection();
             PreparedStatement statement = connection.prepareStatement(SQL_DELETE_INGREDIENT_BY_NAME);
             statement.setString(1, name);
             updateRowsCount = statement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
-        } finally {
-            close(connection);
         }
         return updateRowsCount > 0;
     }
 
     @Override
-    public boolean insert(Ingredient ingredient) throws DaoException {
+    public boolean insert(Ingredient ingredient) {
         if (findIngredientByName(ingredient.getName()) != null) {
             return false;
         }
-        Connection connection = null;
         int updateRowsCount;
         try {
-            connection = ConnectionCreator.createConnection();
             PreparedStatement statement = connection.prepareStatement(SQL_INSERT_INGREDIENT);
             statement.setString(1, ingredient.getName());
             updateRowsCount = statement.executeUpdate();
@@ -186,8 +160,6 @@ public class IngredientDao implements IngredientDaoInterface {
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
-        } finally {
-            close(connection);
         }
         return updateRowsCount > 0;
     }

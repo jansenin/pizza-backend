@@ -1,13 +1,17 @@
 import by.fpmibsu.pizza_site.dao.*;
+import by.fpmibsu.pizza_site.database.ConnectionCreator;
 import by.fpmibsu.pizza_site.entity.*;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 
 public class Runner {
-    public static void main(String[] args) throws DaoException {
-        UserDao userDao = new UserDao();
+    public static void main(String[] args) throws SQLException {
+        Connection userConnection = ConnectionCreator.createConnection();
+        UserDao userDao = new UserDao(userConnection);
         System.out.println("вывод всех пользователей:");
         List<User> users = userDao.findAll();
         for (var i : users) {
@@ -49,7 +53,8 @@ public class Runner {
         }
         // users tested
         System.out.println("\nвывод ингредиента с первым id:");
-        IngredientDao ingredientDao = new IngredientDao();
+        Connection ingredientConnection = ConnectionCreator.createConnection();
+        IngredientDao ingredientDao = new IngredientDao(ingredientConnection);
         Ingredient ingredient = ingredientDao.findIngredientById(1);
         System.out.println(ingredient.toString());
         System.out.println("\nвывод всех ингредиентов:");
@@ -85,7 +90,8 @@ public class Runner {
         }
         // ingredients tested
         System.out.println("\nвывод всех пицц:");
-        PizzaDao pizzaDao = new PizzaDao();
+        Connection pizzaConnection = ConnectionCreator.createConnection();
+        PizzaDao pizzaDao = new PizzaDao(pizzaConnection);
         List<Pizza> pizzas = pizzaDao.findAll();
         for (var i : pizzas) {
             System.out.println(i.toString());
@@ -99,7 +105,8 @@ public class Runner {
         for (var i : pizzas) {
             System.out.println(i.toString());
         }
-        OrderDao orderDao = new OrderDao();
+        Connection orderConnection = ConnectionCreator.createConnection();
+        OrderDao orderDao = new OrderDao(orderConnection);
         System.out.println("\nвывод всех заказов:");
         List<Order> orders = orderDao.findAll();
         for (var i : orders) {
@@ -154,5 +161,10 @@ public class Runner {
         for (var i : pizzas) {
             System.out.println(i.toString());
         }
+        // pizzas tested
+        orderConnection.close();
+        userConnection.close();
+        ingredientConnection.close();
+        pizzaConnection.close();
     }
 }

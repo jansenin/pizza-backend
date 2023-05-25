@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OrderDao implements OrderDaoInterface {
+    private final Connection connection;
     private static final String SQL_SELECT_ALL_ORDERS = "SELECT * FROM orders";
     private static final String SQL_SELECT_ALL_USER_ORDERS = "SELECT * FROM orders WHERE user_id = ?";
     private static final String SQL_SELECT_ID_OF_LAST_USER_ORDER = "SELECT MAX(order_id) AS order_id FROM orders WHERE user_id = ?";
@@ -17,14 +18,16 @@ public class OrderDao implements OrderDaoInterface {
     private static final String SQL_INSERT_PIZZA_IN_ORDER = "INSERT INTO order_pizzas(order_id, pizza_id) VALUES(?, ?)";
     private static final String SQL_INSERT_ORDER = "INSERT INTO orders(status, user_id) VALUES(CAST (? AS orderstatus), ?)";
 
+    public OrderDao(Connection connection) {
+        this.connection = connection;
+    }
 
     @Override
-    public List<Order> findAll() throws DaoException {
+    public List<Order> findAll() {
         List<Order> orders = new ArrayList<>();
-        Connection connection = null;
-        PizzaDao pizzaDao = new PizzaDao();
         try {
-            connection = ConnectionCreator.createConnection();
+            Connection pizzaConnection = ConnectionCreator.createConnection();
+            PizzaDao pizzaDao = new PizzaDao(pizzaConnection);
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(SQL_SELECT_ALL_ORDERS);
             while (resultSet.next()) {
@@ -34,21 +37,19 @@ public class OrderDao implements OrderDaoInterface {
                 List<Pizza> pizzas = pizzaDao.findAllInOrder(order_id);
                 orders.add(new Order(order_id, pizzas, status, user_id));
             }
+            pizzaConnection.close();
         } catch (SQLException e) {
             throw new RuntimeException(e);
-        } finally {
-            close(connection);
         }
         return orders;
     }
 
     @Override
-    public List<Order> findAllUserOrders(User user) throws DaoException {
+    public List<Order> findAllUserOrders(User user) {
         List<Order> orders = new ArrayList<>();
-        Connection connection = null;
-        PizzaDao pizzaDao = new PizzaDao();
         try {
-            connection = ConnectionCreator.createConnection();
+            Connection pizzaConnection = ConnectionCreator.createConnection();
+            PizzaDao pizzaDao = new PizzaDao(pizzaConnection);
             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL_USER_ORDERS);
             statement.setInt(1, user.getId());
             ResultSet resultSet = statement.executeQuery();
@@ -59,21 +60,19 @@ public class OrderDao implements OrderDaoInterface {
                 List<Pizza> pizzas = pizzaDao.findAllInOrder(order_id);
                 orders.add(new Order(order_id, pizzas, status, user_id));
             }
+            pizzaConnection.close();
         } catch (SQLException e) {
             throw new RuntimeException(e);
-        } finally {
-            close(connection);
         }
         return orders;
     }
 
     @Override
-    public Order findOrderById(int id) throws DaoException {
-        Connection connection = null;
+    public Order findOrderById(int id) {
         Order order = null;
-        PizzaDao pizzaDao = new PizzaDao();
         try {
-            connection = ConnectionCreator.createConnection();
+            Connection pizzaConnection = ConnectionCreator.createConnection();
+            PizzaDao pizzaDao = new PizzaDao(pizzaConnection);
             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ORDER_BY_ID);
             statement.setInt(1, id);
             ResultSet resultSet = statement.executeQuery();
@@ -84,24 +83,21 @@ public class OrderDao implements OrderDaoInterface {
                 List<Pizza> pizzas = pizzaDao.findAllInOrder(order_id);
                 order = new Order(order_id, pizzas, status, user_id);
             }
+            pizzaConnection.close();
         } catch (SQLException e) {
             throw new RuntimeException(e);
-        } finally {
-            close(connection);
         }
         return order;
     }
 
     @Override
-    public Order update(Order order) throws DaoException {
+    public Order update(Order order) {
         Order checkOrder = findOrderById(order.getOrderId());
         if (checkOrder == null) {
             order.setOrderId(Order.ID_NOT_DEFINED);
             return order;
         }
-        Connection connection = null;
         try {
-            connection = ConnectionCreator.createConnection();
             PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_ORDER);
             statement.setString(1, order.getOrderStatus().toString());
             statement.setInt(2, order.getUserId());
@@ -109,34 +105,26 @@ public class OrderDao implements OrderDaoInterface {
             statement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
-        } finally {
-            close(connection);
         }
         return order;
     }
     @Override
-    public boolean deleteById(int id) throws DaoException {
-        Connection connection = null;
+    public boolean deleteById(int id) {
         int updateRowsCount;
         try {
-            connection = ConnectionCreator.createConnection();
             PreparedStatement statement = connection.prepareStatement(SQL_DELETE_ORDER_BY_ID);
             statement.setInt(1, id);
             updateRowsCount = statement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
-        } finally {
-            close(connection);
         }
         return updateRowsCount > 0;
     }
 
     @Override
-    public boolean insert(Order order) throws DaoException {
-        Connection connection = null;
+    public boolean insert(Order order) {
         int updateRowsCount;
         try {
-            connection = ConnectionCreator.createConnection();
             PreparedStatement statement = connection.prepareStatement(SQL_INSERT_ORDER);
             statement.setString(1, order.getOrderStatus().toString());
             statement.setInt(2, order.getUserId());
@@ -159,8 +147,6 @@ public class OrderDao implements OrderDaoInterface {
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
-        } finally {
-            close(connection);
         }
         return updateRowsCount > 0;
     }
