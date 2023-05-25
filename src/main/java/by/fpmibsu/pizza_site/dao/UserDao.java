@@ -89,10 +89,10 @@ public class UserDao implements UserDaoInterface {
             connection = ConnectionCreator.createConnection();
             PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_USER);
 
-            statement.setObject(1, user.userRole());
+            statement.setObject(1, user.getRole());
             statement.setString(2, password);
             statement.setString(3, login);
-            statement.setInt(4, user.id());
+            statement.setInt(4, user.getId());
             statement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -112,7 +112,7 @@ public class UserDao implements UserDaoInterface {
         try {
             connection = ConnectionCreator.createConnection();
             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_USER_BY_ID);
-            statement.setInt(1, user.id());
+            statement.setInt(1, user.getId());
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 truePassword = resultSet.getString("password");

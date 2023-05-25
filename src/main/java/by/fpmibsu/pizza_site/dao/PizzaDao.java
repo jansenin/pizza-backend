@@ -129,9 +129,9 @@ public class PizzaDao implements PizzaDaoInterface {
         try {
             connection = ConnectionCreator.createConnection();
             PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_PIZZA);
-            statement.setString(1, pizza.name());
-            statement.setInt(2, pizza.price());
-            statement.setInt(3, pizza.id());
+            statement.setString(1, pizza.getName());
+            statement.setInt(2, pizza.getPrice());
+            statement.setInt(3, pizza.getId());
             statement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -143,7 +143,7 @@ public class PizzaDao implements PizzaDaoInterface {
 
     @Override
     public boolean addIngredientInPizza(Pizza pizza, Ingredient ingredient) throws DaoException {
-        if (pizza.ingredients().contains(ingredient)) {
+        if (pizza.getIngredients().contains(ingredient)) {
             return true;
         }
         Connection connection = null;
@@ -151,11 +151,11 @@ public class PizzaDao implements PizzaDaoInterface {
         try {
             connection = ConnectionCreator.createConnection();
             PreparedStatement statement = connection.prepareStatement(SQL_INSERT_INGREDIENT_IN_PIZZA);
-            statement.setInt(1, pizza.id());
-            statement.setInt(2, ingredient.id());
+            statement.setInt(1, pizza.getId());
+            statement.setInt(2, ingredient.getId());
             updateRowsCount = statement.executeUpdate();
             if (updateRowsCount > 0) {
-                pizza.ingredients().add(ingredient);
+                pizza.getIngredients().add(ingredient);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -167,7 +167,7 @@ public class PizzaDao implements PizzaDaoInterface {
 
     @Override
     public boolean removeIngredientFromPizza(Pizza pizza, Ingredient ingredient) throws DaoException {
-        if (!pizza.ingredients().contains(ingredient)) {
+        if (!pizza.getIngredients().contains(ingredient)) {
             return true;
         }
         Connection connection = null;
@@ -175,11 +175,11 @@ public class PizzaDao implements PizzaDaoInterface {
         try {
             connection = ConnectionCreator.createConnection();
             PreparedStatement statement = connection.prepareStatement(SQL_DELETE_INGREDIENT_FROM_PIZZA);
-            statement.setInt(1, pizza.id());
-            statement.setInt(2, ingredient.id());
+            statement.setInt(1, pizza.getId());
+            statement.setInt(2, ingredient.getId());
             updateRowsCount = statement.executeUpdate();
             if (updateRowsCount > 0) {
-                pizza.ingredients().remove(ingredient);
+                pizza.getIngredients().remove(ingredient);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -225,7 +225,7 @@ public class PizzaDao implements PizzaDaoInterface {
 
     @Override
     public boolean insert(Pizza pizza) throws DaoException {
-        if (findPizzaByName(pizza.name()) != null) {
+        if (findPizzaByName(pizza.getName()) != null) {
             return false;
         }
         Connection connection = null;
@@ -233,15 +233,16 @@ public class PizzaDao implements PizzaDaoInterface {
         try {
             connection = ConnectionCreator.createConnection();
             PreparedStatement statement = connection.prepareStatement(SQL_INSERT_PIZZA);
-            statement.setString(1, pizza.name());
-            statement.setInt(2, pizza.price());
+            statement.setString(1, pizza.getName());
+            statement.setInt(2, pizza.getPrice());
             updateRowsCount = statement.executeUpdate();
-            int id = findPizzaByName(pizza.name()).id();
             if (updateRowsCount > 0) {
-                for (var i : pizza.ingredients()) {
+                int pizzaId = findPizzaByName(pizza.getName()).getId();
+                pizza.setId(pizzaId);
+                for (var i : pizza.getIngredients()) {
                     statement = connection.prepareStatement(SQL_INSERT_INGREDIENT_IN_PIZZA);
-                    statement.setInt(1, id);
-                    statement.setInt(2, i.id());
+                    statement.setInt(1, pizzaId);
+                    statement.setInt(2, i.getId());
                     statement.executeUpdate();
                 }
             }

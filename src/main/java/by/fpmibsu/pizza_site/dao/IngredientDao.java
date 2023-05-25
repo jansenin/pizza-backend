@@ -113,8 +113,8 @@ public class IngredientDao implements IngredientDaoInterface {
         try {
             connection = ConnectionCreator.createConnection();
             PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_INGREDIENT);
-            statement.setString(1, ingredient.name());
-            statement.setInt(2, ingredient.id());
+            statement.setString(1, ingredient.getName());
+            statement.setInt(2, ingredient.getId());
             statement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -123,6 +123,12 @@ public class IngredientDao implements IngredientDaoInterface {
         }
         return ingredient;
     }
+
+    @Override
+    public boolean deleteByIngredient(Ingredient ingredient) throws DaoException {
+        return deleteById(ingredient.getId());
+    }
+
     @Override
     public boolean deleteById(int id) throws DaoException {
         Connection connection = null;
@@ -159,7 +165,7 @@ public class IngredientDao implements IngredientDaoInterface {
 
     @Override
     public boolean insert(Ingredient ingredient) throws DaoException {
-        if (findIngredientByName(ingredient.name()) != null) {
+        if (findIngredientByName(ingredient.getName()) != null) {
             return false;
         }
         Connection connection = null;
@@ -167,8 +173,11 @@ public class IngredientDao implements IngredientDaoInterface {
         try {
             connection = ConnectionCreator.createConnection();
             PreparedStatement statement = connection.prepareStatement(SQL_INSERT_INGREDIENT);
-            statement.setString(1, ingredient.name());
+            statement.setString(1, ingredient.getName());
             updateRowsCount = statement.executeUpdate();
+            if (updateRowsCount > 0) {
+                ingredient.setId(findIngredientByName(ingredient.getName()).getId());
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
