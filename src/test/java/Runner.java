@@ -47,6 +47,7 @@ public class Runner {
         for (var i : users) {
             System.out.println(i.toString());
         }
+        // users tested
         System.out.println("\nвывод ингредиента с первым id:");
         IngredientDao ingredientDao = new IngredientDao();
         Ingredient ingredient = ingredientDao.findIngredientById(1);
@@ -82,6 +83,7 @@ public class Runner {
         for (var i : ingredients) {
             System.out.println(i.toString());
         }
+        // ingredients tested
         System.out.println("\nвывод всех пицц:");
         PizzaDao pizzaDao = new PizzaDao();
         List<Pizza> pizzas = pizzaDao.findAll();
@@ -97,6 +99,46 @@ public class Runner {
         for (var i : pizzas) {
             System.out.println(i.toString());
         }
+        OrderDao orderDao = new OrderDao();
+        System.out.println("\nвывод всех заказов:");
+        List<Order> orders = orderDao.findAll();
+        for (var i : orders) {
+            System.out.println(i.toString());
+        }
+        System.out.println("\nдобавление двух заказов:");
+        orderDao.insert(new Order(Order.ID_NOT_DEFINED, new ArrayList<>(List.of(pizzaDao.findPizzaByName("гавайская"), pizzaDao.findPizzaByName("мясная"))), OrderStatus.IN_PROCESS, 1));
+        orderDao.insert(new Order(Order.ID_NOT_DEFINED, new ArrayList<>(List.of(pizzaDao.findPizzaByName("домашняя"))), OrderStatus.COMPLETED, 2));
+        orderDao.insert(new Order(Order.ID_NOT_DEFINED, new ArrayList<>(List.of(pizzaDao.findPizzaByName("мясная"))), OrderStatus.IN_PROCESS, 2));
+        orders = orderDao.findAll();
+        for (var i : orders) {
+            System.out.println(i.toString());
+        }
+        System.out.println("\nпоиск заказов пользователя со вторым id");
+        orders = orderDao.findAllUserOrders(userDao.findUserById(2));
+        for (var i : orders) {
+            System.out.println(i.toString());
+        }
+        System.out.println("\nизменение статуса заказа:");
+        orders.get(1).setOrderStatus(OrderStatus.REJECTED);
+        orderDao.update(orders.get(1));
+        orders = orderDao.findAll();
+        for (var i : orders) {
+            System.out.println(i.toString());
+        }
+        System.out.println("удаление добавленных заказов по id");
+        orders = orderDao.findAllUserOrders(userDao.findUserById(1));
+        for (var i : orders) {
+            orderDao.deleteById(i.getOrderId());
+        }
+        orders = orderDao.findAllUserOrders(userDao.findUserById(2));
+        for (var i : orders) {
+            orderDao.deleteById(i.getOrderId());
+        }
+        orders = orderDao.findAll();
+        for (var i : orders) {
+            System.out.println(i.toString());
+        }
+        // orders tested
         System.out.println("\nудаление мясной пиццы по названию, изменение имени домашней и добавление в неё ананаса");
         pizzaDao.deleteByName("мясная");
         pizza.setName("деревенская");

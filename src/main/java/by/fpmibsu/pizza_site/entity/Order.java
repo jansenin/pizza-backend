@@ -49,6 +49,6 @@ public class Order {
 
     @Override
     public String toString() {
-        return "Order [ orderId = " + orderId + " userId = " + userId + " orderStatus = " + orderStatus.toString() + "pizzas = " + pizzas.toString() + " ]";
+        return "Order [ orderId = " + orderId + " userId = " + userId + " orderStatus = " + orderStatus.toString() + " pizzas = " + pizzas.toString() + " ]";
     }
 }

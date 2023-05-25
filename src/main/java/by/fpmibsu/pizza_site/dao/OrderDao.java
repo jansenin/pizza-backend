@@ -10,12 +10,12 @@ import java.util.List;
 public class OrderDao implements OrderDaoInterface {
     private static final String SQL_SELECT_ALL_ORDERS = "SELECT * FROM orders";
     private static final String SQL_SELECT_ALL_USER_ORDERS = "SELECT * FROM orders WHERE user_id = ?";
-    private static final String SQL_SELECT_ID_OF_LAST_USER_ORDER = "SELECT MAX(order_id) FROM orders WHERE user_id = ?";
+    private static final String SQL_SELECT_ID_OF_LAST_USER_ORDER = "SELECT MAX(order_id) AS order_id FROM orders WHERE user_id = ?";
     private static final String SQL_SELECT_ORDER_BY_ID = "SELECT * FROM orders WHERE order_id = ?";
-    private static final String SQL_UPDATE_ORDER = "UPDATE orders SET status = ?, user_id = ? WHERE order_id = ?";
+    private static final String SQL_UPDATE_ORDER = "UPDATE orders SET status = CAST (? AS orderstatus), user_id = ? WHERE order_id = ?";
     private static final String SQL_DELETE_ORDER_BY_ID = "DELETE FROM orders WHERE order_id = ?";
     private static final String SQL_INSERT_PIZZA_IN_ORDER = "INSERT INTO order_pizzas(order_id, pizza_id) VALUES(?, ?)";
-    private static final String SQL_INSERT_ORDER = "INSERT INTO orders(status, user_id) VALUES(?, ?)";
+    private static final String SQL_INSERT_ORDER = "INSERT INTO orders(status, user_id) VALUES(CAST (? AS orderstatus), ?)";
 
 
     @Override
@@ -29,7 +29,7 @@ public class OrderDao implements OrderDaoInterface {
             ResultSet resultSet = statement.executeQuery(SQL_SELECT_ALL_ORDERS);
             while (resultSet.next()) {
                 int order_id = resultSet.getInt("order_id");
-                OrderStatus status = resultSet.getObject("status", OrderStatus.class);
+                OrderStatus status = OrderStatus.valueOf(resultSet.getString("status"));
                 int user_id = resultSet.getInt("user_id");
                 List<Pizza> pizzas = pizzaDao.findAllInOrder(order_id);
                 orders.add(new Order(order_id, pizzas, status, user_id));
@@ -54,7 +54,7 @@ public class OrderDao implements OrderDaoInterface {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 int order_id = resultSet.getInt("order_id");
-                OrderStatus status = resultSet.getObject("status", OrderStatus.class);
+                OrderStatus status = OrderStatus.valueOf(resultSet.getString("status"));
                 int user_id = resultSet.getInt("user_id");
                 List<Pizza> pizzas = pizzaDao.findAllInOrder(order_id);
                 orders.add(new Order(order_id, pizzas, status, user_id));
@@ -79,7 +79,7 @@ public class OrderDao implements OrderDaoInterface {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 int order_id = resultSet.getInt("order_id");
-                OrderStatus status = resultSet.getObject("status", OrderStatus.class);
+                OrderStatus status = OrderStatus.valueOf(resultSet.getString("status"));
                 int user_id = resultSet.getInt("user_id");
                 List<Pizza> pizzas = pizzaDao.findAllInOrder(order_id);
                 order = new Order(order_id, pizzas, status, user_id);
@@ -103,7 +103,7 @@ public class OrderDao implements OrderDaoInterface {
         try {
             connection = ConnectionCreator.createConnection();
             PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_ORDER);
-            statement.setObject(1, order.getOrderStatus().toString());
+            statement.setString(1, order.getOrderStatus().toString());
             statement.setInt(2, order.getUserId());
             statement.setInt(3, order.getOrderId());
             statement.executeUpdate();
