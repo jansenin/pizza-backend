@@ -1,7 +1,5 @@
 package by.fpmibsu.pizza_site.entity;
 
-import com.sun.security.auth.NTSid;
-
 import java.util.List;
 
 public class Pizza {
@@ -51,6 +49,6 @@ public class Pizza {
 
     @Override
     public String toString() {
-        return "Pizza [ id = " + id + " name = " + name + " price = " + price + "ingredients = " + ingredients.toString() + " ]";
+        return "Pizza [ id = " + id + " name = " + name + " price = " + price + " ingredients = " + ingredients.toString() + " ]";
     }
 }

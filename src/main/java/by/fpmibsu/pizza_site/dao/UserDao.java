@@ -12,9 +12,10 @@ public class UserDao implements UserDaoInterface {
     private static final String SQL_SELECT_ALL_USERS = "SELECT * FROM users;";
     private static final String SQL_SELECT_USER_BY_ID = "SELECT * FROM users WHERE user_id = ?";
     private static final String SQL_SELECT_USER_BY_LOGIN = "SELECT * FROM users WHERE login = ?";
-    private static final String SQL_UPDATE_USER = "UPDATE users SET role = ?, password = ?, login = ?  WHERE user_id = ?";
+    private static final String SQL_UPDATE_USER = "UPDATE users SET role = (CAST (? AS userrole)), password = ?, login = ?  WHERE user_id = ?";
     private static final String SQL_DELETE_USER_BY_ID = "DELETE FROM users WHERE user_id = ?";
-    private static final String SQL_INSERT_USER = "INSERT INTO users(role, password, login) VALUES (?, ?, ?)";
+    private static final String SQL_DELETE_USER_BY_LOGIN = "DELETE FROM users WHERE login = ?";
+    private static final String SQL_INSERT_USER = "INSERT INTO users(role, password, login) VALUES (CAST(? AS userrole), ?, ?)";
 
 
     @Override
@@ -27,8 +28,9 @@ public class UserDao implements UserDaoInterface {
             ResultSet resultSet = statement.executeQuery(SQL_SELECT_ALL_USERS);
             while (resultSet.next()) {
                 int id = resultSet.getInt("user_id");
-                UserRole role = resultSet.getObject("role", UserRole.class);
-                users.add(new User(role, id));
+                UserRole role = UserRole.valueOf(resultSet.getString("role"));
+                String login = resultSet.getString("login");
+                users.add(new User(role, login, id));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -49,8 +51,9 @@ public class UserDao implements UserDaoInterface {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 id = resultSet.getInt("user_id");
-                UserRole role = resultSet.getObject("role", UserRole.class);
-                user = new User(role, id);
+                UserRole role = UserRole.valueOf(resultSet.getString("role"));
+                String login = resultSet.getString("login");
+                user = new User(role, login, id);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -71,8 +74,9 @@ public class UserDao implements UserDaoInterface {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 int id = resultSet.getInt("user_id");
-                UserRole role = resultSet.getObject("role", UserRole.class);
-                user = new User(role, id);
+                UserRole role = UserRole.valueOf(resultSet.getString("role"));
+                login = resultSet.getString("login");
+                user = new User(role, login, id);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -83,15 +87,21 @@ public class UserDao implements UserDaoInterface {
     }
 
     @Override
-    public User updateUser(User user, String login, String password) throws DaoException {
+    public User updateUser(User user, String password) throws DaoException {
+        User idCheckUser = findUserById(user.getId());
+        User loginCheckUser = findUserByLogin(user.getLogin());
+        if (idCheckUser == null || (loginCheckUser != null && loginCheckUser.getId() != user.getId())) {
+            user.setId(User.ID_NOT_DEFINED);
+            return user;
+        }
         Connection connection = null;
         try {
             connection = ConnectionCreator.createConnection();
             PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_USER);
 
-            statement.setObject(1, user.getRole());
+            statement.setString(1, user.getRole().toString());
             statement.setString(2, password);
-            statement.setString(3, login);
+            statement.setString(3, user.getLogin());
             statement.setInt(4, user.getId());
             statement.executeUpdate();
         } catch (SQLException e) {
@@ -143,8 +153,26 @@ public class UserDao implements UserDaoInterface {
     }
 
     @Override
-    public boolean insert(UserRole role, String password, String login) throws DaoException {
-        if (findUserByLogin(login) != null) {
+    public boolean deleteByLogin(String login) throws DaoException {
+        Connection connection = null;
+        int updateRowsCount;
+        try {
+            connection = ConnectionCreator.createConnection();
+            PreparedStatement statement = connection.prepareStatement(SQL_DELETE_USER_BY_LOGIN);
+            statement.setString(1, login);
+            updateRowsCount = statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            close(connection);
+        }
+        return updateRowsCount > 0;
+    }
+
+    @Override
+    public boolean insert(User user, String password) throws DaoException {
+        if (findUserByLogin(user.getLogin()) != null) {
+            user.setId(User.ID_NOT_DEFINED);
             return false;
         }
         Connection connection = null;
@@ -152,10 +180,13 @@ public class UserDao implements UserDaoInterface {
         try {
             connection = ConnectionCreator.createConnection();
             PreparedStatement statement = connection.prepareStatement(SQL_INSERT_USER);
-            statement.setObject(1, role);
+            statement.setString(1, user.getRole().toString());
             statement.setString(2, password);
-            statement.setString(3, login);
+            statement.setString(3, user.getLogin());
             updateRowsCount = statement.executeUpdate();
+            if (updateRowsCount > 0) {
+                user.setId(findUserByLogin(user.getLogin()).getId());
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {

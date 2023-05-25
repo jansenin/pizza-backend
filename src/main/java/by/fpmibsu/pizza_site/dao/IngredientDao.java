@@ -109,6 +109,12 @@ public class IngredientDao implements IngredientDaoInterface {
 
     @Override
     public Ingredient update(Ingredient ingredient) throws DaoException {
+        Ingredient idCheckIngredient = findIngredientById(ingredient.getId());
+        Ingredient nameCheckIngredient = findIngredientByName(ingredient.getName());
+        if (idCheckIngredient == null || (nameCheckIngredient != null && nameCheckIngredient.getId() != ingredient.getId())) {
+            ingredient.setId(Ingredient.ID_NOT_DEFINED);
+            return ingredient;
+        }
         Connection connection = null;
         try {
             connection = ConnectionCreator.createConnection();

@@ -94,11 +94,16 @@ public class OrderDao implements OrderDaoInterface {
 
     @Override
     public Order update(Order order) throws DaoException {
+        Order checkOrder = findOrderById(order.getOrderId());
+        if (checkOrder == null) {
+            order.setOrderId(Order.ID_NOT_DEFINED);
+            return order;
+        }
         Connection connection = null;
         try {
             connection = ConnectionCreator.createConnection();
             PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_ORDER);
-            statement.setObject(1, order.getOrderStatus());
+            statement.setObject(1, order.getOrderStatus().toString());
             statement.setInt(2, order.getUserId());
             statement.setInt(3, order.getOrderId());
             statement.executeUpdate();
@@ -133,7 +138,7 @@ public class OrderDao implements OrderDaoInterface {
         try {
             connection = ConnectionCreator.createConnection();
             PreparedStatement statement = connection.prepareStatement(SQL_INSERT_ORDER);
-            statement.setObject(1, order.getOrderStatus());
+            statement.setString(1, order.getOrderStatus().toString());
             statement.setInt(2, order.getUserId());
             updateRowsCount = statement.executeUpdate();
             if (updateRowsCount > 0) {
