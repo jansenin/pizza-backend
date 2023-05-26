@@ -1,6 +1,5 @@
 package by.fpmibsu.pizza_site.dao;
 
-import by.fpmibsu.pizza_site.database.ConnectionCreator;
 import by.fpmibsu.pizza_site.entity.*;
 
 import java.sql.*;
@@ -26,10 +25,9 @@ public class OrderDao implements OrderDaoInterface {
     public List<Order> findAll() {
         List<Order> orders = new ArrayList<>();
         try {
-            Connection pizzaConnection = ConnectionCreator.createConnection();
-            PizzaDao pizzaDao = new PizzaDao(pizzaConnection);
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(SQL_SELECT_ALL_ORDERS);
+            PizzaDao pizzaDao = new PizzaDao(connection);
             while (resultSet.next()) {
                 int order_id = resultSet.getInt("order_id");
                 OrderStatus status = OrderStatus.valueOf(resultSet.getString("status"));
@@ -37,7 +35,6 @@ public class OrderDao implements OrderDaoInterface {
                 List<Pizza> pizzas = pizzaDao.findAllInOrder(order_id);
                 orders.add(new Order(order_id, pizzas, status, user_id));
             }
-            pizzaConnection.close();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -48,11 +45,10 @@ public class OrderDao implements OrderDaoInterface {
     public List<Order> findAllUserOrders(User user) {
         List<Order> orders = new ArrayList<>();
         try {
-            Connection pizzaConnection = ConnectionCreator.createConnection();
-            PizzaDao pizzaDao = new PizzaDao(pizzaConnection);
             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL_USER_ORDERS);
             statement.setInt(1, user.getId());
             ResultSet resultSet = statement.executeQuery();
+            PizzaDao pizzaDao = new PizzaDao(connection);
             while (resultSet.next()) {
                 int order_id = resultSet.getInt("order_id");
                 OrderStatus status = OrderStatus.valueOf(resultSet.getString("status"));
@@ -60,7 +56,6 @@ public class OrderDao implements OrderDaoInterface {
                 List<Pizza> pizzas = pizzaDao.findAllInOrder(order_id);
                 orders.add(new Order(order_id, pizzas, status, user_id));
             }
-            pizzaConnection.close();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -71,11 +66,10 @@ public class OrderDao implements OrderDaoInterface {
     public Order findOrderById(int id) {
         Order order = null;
         try {
-            Connection pizzaConnection = ConnectionCreator.createConnection();
-            PizzaDao pizzaDao = new PizzaDao(pizzaConnection);
             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ORDER_BY_ID);
             statement.setInt(1, id);
             ResultSet resultSet = statement.executeQuery();
+            PizzaDao pizzaDao = new PizzaDao(connection);
             while (resultSet.next()) {
                 int order_id = resultSet.getInt("order_id");
                 OrderStatus status = OrderStatus.valueOf(resultSet.getString("status"));
@@ -83,7 +77,6 @@ public class OrderDao implements OrderDaoInterface {
                 List<Pizza> pizzas = pizzaDao.findAllInOrder(order_id);
                 order = new Order(order_id, pizzas, status, user_id);
             }
-            pizzaConnection.close();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

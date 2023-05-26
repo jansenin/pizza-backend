@@ -1,6 +1,5 @@
 package by.fpmibsu.pizza_site.dao;
 
-import by.fpmibsu.pizza_site.database.ConnectionCreator;
 import by.fpmibsu.pizza_site.entity.Ingredient;
 import by.fpmibsu.pizza_site.entity.Pizza;
 
@@ -35,8 +34,7 @@ public class PizzaDao implements PizzaDaoInterface {
         try {
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(SQL_SELECT_ALL_PIZZAS);
-            Connection ingredientConnection = ConnectionCreator.createConnection();
-            IngredientDao ingredientDao = new IngredientDao(ingredientConnection);
+            IngredientDao ingredientDao = new IngredientDao(connection);
             while (resultSet.next()) {
                 int id = resultSet.getInt("pizza_id");
                 String name = resultSet.getString("name");
@@ -44,7 +42,6 @@ public class PizzaDao implements PizzaDaoInterface {
                 List<Ingredient> ingredients = ingredientDao.findAllForPizza(id);
                 pizzas.add(new Pizza(id, name, ingredients, price));
             }
-            ingredientConnection.close();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -58,8 +55,7 @@ public class PizzaDao implements PizzaDaoInterface {
             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL_PIZZAS_IN_ORDER);
             statement.setInt(1, order_id);
             ResultSet resultSet = statement.executeQuery();
-            Connection ingredientConnection = ConnectionCreator.createConnection();
-            IngredientDao ingredientDao = new IngredientDao(ingredientConnection);
+            IngredientDao ingredientDao = new IngredientDao(connection);
             while (resultSet.next()) {
                 int id = resultSet.getInt("pizza_id");
                 String name = resultSet.getString("name");
@@ -67,7 +63,6 @@ public class PizzaDao implements PizzaDaoInterface {
                 List<Ingredient> ingredients = ingredientDao.findAllForPizza(id);
                 pizzas.add(new Pizza(id, name, ingredients, price));
             }
-            ingredientConnection.close();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -81,8 +76,7 @@ public class PizzaDao implements PizzaDaoInterface {
             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_PIZZA_BY_ID);
             statement.setInt(1, id);
             ResultSet resultSet = statement.executeQuery();
-            Connection ingredientConnection = ConnectionCreator.createConnection();
-            IngredientDao ingredientDao = new IngredientDao(ingredientConnection);
+            IngredientDao ingredientDao = new IngredientDao(connection);
             while (resultSet.next()) {
                 id = resultSet.getInt("pizza_id");
                 String name = resultSet.getString("name");
@@ -90,7 +84,6 @@ public class PizzaDao implements PizzaDaoInterface {
                 List<Ingredient> ingredients = ingredientDao.findAllForPizza(id);
                 pizza = new Pizza(id, name, ingredients, price);
             }
-            ingredientConnection.close();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -104,8 +97,7 @@ public class PizzaDao implements PizzaDaoInterface {
             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_PIZZA_BY_NAME);
             statement.setString(1, name);
             ResultSet resultSet = statement.executeQuery();
-            Connection ingredientConnection = ConnectionCreator.createConnection();
-            IngredientDao ingredientDao = new IngredientDao(ingredientConnection);
+            IngredientDao ingredientDao = new IngredientDao(connection);
             while (resultSet.next()) {
                 int id = resultSet.getInt("pizza_id");
                 name = resultSet.getString("name");
@@ -113,7 +105,6 @@ public class PizzaDao implements PizzaDaoInterface {
                 List<Ingredient> ingredients = ingredientDao.findAllForPizza(id);
                 pizza = new Pizza(id, name, ingredients, price);
             }
-            ingredientConnection.close();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
