@@ -60,7 +60,7 @@ public class IngredientDao implements IngredientDaoInterface {
     }
 
     @Override
-    public Ingredient findIngredientById(int id) {
+    public Ingredient findById(int id) {
         Ingredient ingredient = null;
         try {
             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_INGREDIENT_BY_ID);
@@ -97,7 +97,7 @@ public class IngredientDao implements IngredientDaoInterface {
 
     @Override
     public Ingredient update(Ingredient ingredient) {
-        Ingredient idCheckIngredient = findIngredientById(ingredient.getId());
+        Ingredient idCheckIngredient = findById(ingredient.getId());
         Ingredient nameCheckIngredient = findIngredientByName(ingredient.getName());
         if (idCheckIngredient == null || (nameCheckIngredient != null && nameCheckIngredient.getId() != ingredient.getId())) {
             ingredient.setId(Ingredient.ID_NOT_DEFINED);

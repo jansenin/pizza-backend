@@ -1,11 +1,12 @@
 package by.fpmibsu.pizza_site.entity;
 
-public class User {
+public class User extends Entity {
     private UserRole role;
     private String login;
-    private int id;
+    private String password;
     static public final int ID_NOT_DEFINED = -1;
-    public User(UserRole role, String login, int id) {
+    public User(UserRole role, String login, int id, String password) {
+        this.password = password;
         this.role = role;
         this.id = id;
         this.login = login;
@@ -13,14 +14,6 @@ public class User {
 
     public void setRole(UserRole role) {
         this.role = role;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getId() {
-        return id;
     }
 
     public UserRole getRole() {
@@ -35,8 +28,16 @@ public class User {
         this.login = login;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     @Override
     public String toString() {
-        return "User [ id = " + id + " login = " + login + " role = " + role.toString() + " ]";
+        return "User [ id = " + id + " login = " + login + " role = " + role.toString() + " password = " + password + " ]";
     }
 }

@@ -70,7 +70,7 @@ public class PizzaDao implements PizzaDaoInterface {
     }
 
     @Override
-    public Pizza findPizzaById(int id) {
+    public Pizza findById(int id) {
         Pizza pizza = null;
         try {
             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_PIZZA_BY_ID);
@@ -113,7 +113,7 @@ public class PizzaDao implements PizzaDaoInterface {
 
     @Override
     public Pizza update(Pizza pizza) {
-        Pizza idCheckPizza = findPizzaById(pizza.getId());
+        Pizza idCheckPizza = findById(pizza.getId());
         Pizza nameCheckPizza = findPizzaByName(pizza.getName());
         if (idCheckPizza == null || (nameCheckPizza != null && nameCheckPizza.getId() != pizza.getId())) {
             pizza.setId(Ingredient.ID_NOT_DEFINED);

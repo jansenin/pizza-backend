@@ -5,11 +5,6 @@ import by.fpmibsu.pizza_site.entity.User;
 
 import java.util.List;
 
-public interface OrderDaoInterface {
-    List<Order> findAll();
+public interface OrderDaoInterface extends DaoInterface<Order> {
     List<Order> findAllUserOrders(User user);
-    Order findOrderById(int id);
-    Order update(Order order);
-    boolean deleteById(int id);
-    boolean insert(Order order);
 }

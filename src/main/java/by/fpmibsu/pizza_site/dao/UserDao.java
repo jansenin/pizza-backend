@@ -31,7 +31,8 @@ public class UserDao implements UserDaoInterface {
                 int id = resultSet.getInt("user_id");
                 UserRole role = UserRole.valueOf(resultSet.getString("role"));
                 String login = resultSet.getString("login");
-                users.add(new User(role, login, id));
+                String password = resultSet.getString("password");
+                users.add(new User(role, login, id, password));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -40,7 +41,7 @@ public class UserDao implements UserDaoInterface {
     }
 
     @Override
-    public User findUserById(int id) {
+    public User findById(int id) {
         User user = null;
         try {
             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_USER_BY_ID);
@@ -50,7 +51,8 @@ public class UserDao implements UserDaoInterface {
                 id = resultSet.getInt("user_id");
                 UserRole role = UserRole.valueOf(resultSet.getString("role"));
                 String login = resultSet.getString("login");
-                user = new User(role, login, id);
+                String password = resultSet.getString("password");
+                user = new User(role, login, id, password);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -69,7 +71,8 @@ public class UserDao implements UserDaoInterface {
                 int id = resultSet.getInt("user_id");
                 UserRole role = UserRole.valueOf(resultSet.getString("role"));
                 login = resultSet.getString("login");
-                user = new User(role, login, id);
+                String password = resultSet.getString("password");
+                user = new User(role, login, id, password);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -78,8 +81,8 @@ public class UserDao implements UserDaoInterface {
     }
 
     @Override
-    public User updateUser(User user, String password) {
-        User idCheckUser = findUserById(user.getId());
+    public User update(User user) {
+        User idCheckUser = findById(user.getId());
         User loginCheckUser = findUserByLogin(user.getLogin());
         if (idCheckUser == null || (loginCheckUser != null && loginCheckUser.getId() != user.getId())) {
             user.setId(User.ID_NOT_DEFINED);
@@ -89,7 +92,7 @@ public class UserDao implements UserDaoInterface {
             PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_USER);
 
             statement.setString(1, user.getRole().toString());
-            statement.setString(2, password);
+            statement.setString(2, user.getPassword());
             statement.setString(3, user.getLogin());
             statement.setInt(4, user.getId());
             statement.executeUpdate();
@@ -145,7 +148,7 @@ public class UserDao implements UserDaoInterface {
     }
 
     @Override
-    public boolean insert(User user, String password) {
+    public boolean insert(User user) {
         if (findUserByLogin(user.getLogin()) != null) {
             user.setId(User.ID_NOT_DEFINED);
             return false;
@@ -154,7 +157,7 @@ public class UserDao implements UserDaoInterface {
         try {
             PreparedStatement statement = connection.prepareStatement(SQL_INSERT_USER);
             statement.setString(1, user.getRole().toString());
-            statement.setString(2, password);
+            statement.setString(2, user.getPassword());
             statement.setString(3, user.getLogin());
             updateRowsCount = statement.executeUpdate();
             if (updateRowsCount > 0) {

@@ -2,8 +2,7 @@ package by.fpmibsu.pizza_site.entity;
 
 import java.util.List;
 
-public class Pizza {
-    private int id;
+public class Pizza extends Entity {
     private int price;
     private String name;
     private List<Ingredient> ingredients;
@@ -13,10 +12,6 @@ public class Pizza {
         this.name = name;
         this.ingredients = ingredients;
         this.price = price;
-    }
-
-    public int getId() {
-        return id;
     }
 
     public String getName() {
@@ -29,10 +24,6 @@ public class Pizza {
 
     public List<Ingredient> getIngredients() {
         return ingredients;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public void setName(String name) {

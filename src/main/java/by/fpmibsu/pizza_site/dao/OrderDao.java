@@ -63,7 +63,7 @@ public class OrderDao implements OrderDaoInterface {
     }
 
     @Override
-    public Order findOrderById(int id) {
+    public Order findById(int id) {
         Order order = null;
         try {
             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ORDER_BY_ID);
@@ -85,16 +85,16 @@ public class OrderDao implements OrderDaoInterface {
 
     @Override
     public Order update(Order order) {
-        Order checkOrder = findOrderById(order.getOrderId());
+        Order checkOrder = findById(order.getId());
         if (checkOrder == null) {
-            order.setOrderId(Order.ID_NOT_DEFINED);
+            order.setId(Order.ID_NOT_DEFINED);
             return order;
         }
         try {
             PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_ORDER);
             statement.setString(1, order.getOrderStatus().toString());
             statement.setInt(2, order.getUserId());
-            statement.setInt(3, order.getOrderId());
+            statement.setInt(3, order.getId());
             statement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -129,7 +129,7 @@ public class OrderDao implements OrderDaoInterface {
                 int orderId = 0;
                 while (resultSet.next()) {
                     orderId = resultSet.getInt("order_id");
-                    order.setOrderId(orderId);
+                    order.setId(orderId);
                 }
                 for (var i : order.getPizzas()) {
                     statement = connection.prepareStatement(SQL_INSERT_PIZZA_IN_ORDER);
