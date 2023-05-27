@@ -1,7 +1,6 @@
 package by.fpmibsu.pizza_site.entity;
 
-public class Ingredient {
-    private int id;
+public class Ingredient extends Entity {
     private String name;
     static public final int ID_NOT_DEFINED = -1;
     public Ingredient(int id, String name) {
@@ -9,18 +8,9 @@ public class Ingredient {
         this.name = name;
     }
 
-    public int getId() {
-        return id;
-    }
-
     public String getName() {
         return name;
     }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public void setName(String name) {
         this.name = name;
     }

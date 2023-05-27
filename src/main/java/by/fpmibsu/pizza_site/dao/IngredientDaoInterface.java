@@ -1,17 +1,13 @@
 package by.fpmibsu.pizza_site.dao;
 
 import by.fpmibsu.pizza_site.entity.Ingredient;
+import by.fpmibsu.pizza_site.exception.DaoException;
 
 import java.util.List;
 
-public interface IngredientDaoInterface {
-    List<Ingredient> findAll();
-    List<Ingredient> findAllForPizza(int pizza_id);
-    Ingredient findIngredientById(int id);
-    Ingredient findIngredientByName(String name);
-    Ingredient update(Ingredient ingredient);
-    boolean deleteByIngredient(Ingredient ingredient);
-    boolean deleteById(int id);
-    boolean deleteByName(String name);
-    boolean insert(Ingredient ingredient);
+public interface IngredientDaoInterface extends DaoInterface<Ingredient> {
+    List<Ingredient> findAllForPizza(int pizza_id) throws DaoException;
+    Ingredient findIngredientByName(String name) throws DaoException;
+    void deleteByIngredient(Ingredient ingredient) throws DaoException;
+    void deleteByName(String name) throws DaoException;
 }

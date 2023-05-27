@@ -21,6 +21,7 @@ public class ConnectionCreator {
             dataSource.setUser((String) properties.get("user"));
             dataSource.setPassword((String) properties.get("password"));
             dataSource.setPortNumbers(new int[]{Integer.parseInt((String) properties.get("db.port"))});
+            dataSource.setDefaultAutoCommit(Boolean.parseBoolean((String) properties.get("autocommit")));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

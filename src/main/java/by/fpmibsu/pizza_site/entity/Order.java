@@ -2,21 +2,16 @@ package by.fpmibsu.pizza_site.entity;
 
 import java.util.List;
 
-public class Order {
-    private int orderId;
+public class Order extends Entity {
     private int userId;
     private OrderStatus orderStatus;
     private List<Pizza> pizzas;
     static public final int ID_NOT_DEFINED = -1;
-    public Order(int orderId, List<Pizza> pizzas, OrderStatus orderStatus, int userId) {
-        this.orderId = orderId;
+    public Order(int id, List<Pizza> pizzas, OrderStatus orderStatus, int userId) {
+        this.id = id;
         this.userId = userId;
         this.pizzas = pizzas;
         this.orderStatus = orderStatus;
-    }
-
-    public int getOrderId() {
-        return orderId;
     }
 
     public int getUserId() {
@@ -35,10 +30,6 @@ public class Order {
         this.orderStatus = orderStatus;
     }
 
-    public void setOrderId(int orderId) {
-        this.orderId = orderId;
-    }
-
     public void setPizzas(List<Pizza> pizzas) {
         this.pizzas = pizzas;
     }
@@ -49,6 +40,6 @@ public class Order {
 
     @Override
     public String toString() {
-        return "Order [ orderId = " + orderId + " userId = " + userId + " orderStatus = " + orderStatus.toString() + " pizzas = " + pizzas.toString() + " ]";
+        return "Order [ orderId = " + id+ " userId = " + userId + " orderStatus = " + orderStatus.toString() + " pizzas = " + pizzas.toString() + " ]";
     }
 }
