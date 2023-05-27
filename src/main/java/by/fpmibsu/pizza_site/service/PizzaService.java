@@ -33,15 +33,15 @@ public class PizzaService extends Service implements PizzaServiceInterface {
     }
 
     @Override
-    public boolean deleteById(int id) throws DaoException, TransactionException {
+    public void deleteById(int id) throws DaoException, TransactionException {
         PizzaDaoInterface dao = transaction.createDao(PizzaDaoInterface.class);
-        return dao.deleteById(id);
+        dao.deleteById(id);
     }
 
     @Override
-    public boolean insert(Pizza pizza) throws DaoException, TransactionException {
+    public void insert(Pizza pizza) throws DaoException, TransactionException {
         PizzaDaoInterface dao = transaction.createDao(PizzaDaoInterface.class);
-        return dao.insert(pizza);
+        dao.insert(pizza);
     }
 
     @Override
@@ -51,14 +51,14 @@ public class PizzaService extends Service implements PizzaServiceInterface {
     }
 
     @Override
-    public boolean addIngredientInPizza(Pizza pizza, Ingredient ingredient) throws DaoException, TransactionException {
+    public void addIngredientInPizza(Pizza pizza, Ingredient ingredient) throws DaoException, TransactionException {
         PizzaDaoInterface dao = transaction.createDao(PizzaDaoInterface.class);
-        return dao.addIngredientInPizza(pizza, ingredient);
+        dao.addIngredientInPizza(pizza, ingredient);
     }
 
     @Override
-    public boolean removeIngredientFromPizza(Pizza pizza, Ingredient ingredient) throws DaoException, TransactionException {
+    public void removeIngredientFromPizza(Pizza pizza, Ingredient ingredient) throws DaoException, TransactionException {
         PizzaDaoInterface dao = transaction.createDao(PizzaDaoInterface.class);
-        return dao.removeIngredientFromPizza(pizza, ingredient);
+        dao.removeIngredientFromPizza(pizza, ingredient);
     }
 }

@@ -8,6 +8,6 @@ import java.util.List;
 public interface IngredientDaoInterface extends DaoInterface<Ingredient> {
     List<Ingredient> findAllForPizza(int pizza_id) throws DaoException;
     Ingredient findIngredientByName(String name) throws DaoException;
-    boolean deleteByIngredient(Ingredient ingredient) throws DaoException;
-    boolean deleteByName(String name) throws DaoException;
+    void deleteByIngredient(Ingredient ingredient) throws DaoException;
+    void deleteByName(String name) throws DaoException;
 }

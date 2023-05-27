@@ -2,6 +2,7 @@ package by.fpmibsu.pizza_site.dao;
 
 import by.fpmibsu.pizza_site.entity.Ingredient;
 import by.fpmibsu.pizza_site.exception.DaoException;
+import org.apache.log4j.Logger;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -19,6 +20,8 @@ public class IngredientDao extends BaseDao implements IngredientDaoInterface {
             "FROM ingredients INNER JOIN pizza_ingredients USING(ingredient_id) " +
             "INNER JOIN pizzas USING(pizza_id) " +
             "WHERE pizza_id = ? ";
+
+    private static final Logger logger = Logger.getLogger(IngredientDao.class);
 
     public IngredientDao(Connection connection) {
         super(connection);
@@ -129,52 +132,48 @@ public class IngredientDao extends BaseDao implements IngredientDaoInterface {
     }
 
     @Override
-    public boolean deleteByIngredient(Ingredient ingredient) throws DaoException {
-        return deleteById(ingredient.getId());
+    public void deleteByIngredient(Ingredient ingredient) throws DaoException {
+        deleteById(ingredient.getId());
     }
 
     @Override
-    public boolean deleteById(int id) throws DaoException {
-        int updateRowsCount;
-        try {
-            PreparedStatement statement = connection.prepareStatement(SQL_DELETE_INGREDIENT_BY_ID);
+    public void deleteById(int id) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE_INGREDIENT_BY_ID)) {
             statement.setInt(1, id);
-            updateRowsCount = statement.executeUpdate();
+            statement.executeUpdate();
         } catch (SQLException e) {
             throw new DaoException(e);
         }
-        return updateRowsCount > 0;
     }
 
     @Override
-    public boolean deleteByName(String name) throws DaoException {
-        int updateRowsCount;
-        try {
-            PreparedStatement statement = connection.prepareStatement(SQL_DELETE_INGREDIENT_BY_NAME);
+    public void deleteByName(String name) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE_INGREDIENT_BY_NAME)) {
             statement.setString(1, name);
-            updateRowsCount = statement.executeUpdate();
+            statement.executeUpdate();
         } catch (SQLException e) {
             throw new DaoException(e);
         }
-        return updateRowsCount > 0;
     }
 
     @Override
-    public boolean insert(Ingredient ingredient) throws DaoException {
+    public void insert(Ingredient ingredient) throws DaoException {
         if (findIngredientByName(ingredient.getName()) != null) {
-            return false;
+            ingredient.setId(Ingredient.ID_NOT_DEFINED);
+            return;
         }
-        int updateRowsCount;
-        try {
-            PreparedStatement statement = connection.prepareStatement(SQL_INSERT_INGREDIENT);
+        try (PreparedStatement statement = connection.prepareStatement(SQL_INSERT_INGREDIENT, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, ingredient.getName());
-            updateRowsCount = statement.executeUpdate();
-            if (updateRowsCount > 0) {
-                ingredient.setId(findIngredientByName(ingredient.getName()).getId());
+            statement.executeUpdate();
+            ResultSet resultSet = statement.getGeneratedKeys();
+            if (resultSet.next()) {
+                ingredient.setId(resultSet.getInt(1));
+            } else {
+                logger.error("There is no auto incremented index after trying to add record into table `ingredients`");
+                throw new DaoException();
             }
         } catch (SQLException e) {
             throw new DaoException(e);
         }
-        return updateRowsCount > 0;
     }
 }

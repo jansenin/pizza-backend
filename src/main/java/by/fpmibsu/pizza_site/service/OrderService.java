@@ -33,15 +33,15 @@ public class OrderService extends Service implements OrderServiceInterface {
     }
 
     @Override
-    public boolean deleteById(int id) throws DaoException, TransactionException {
+    public void deleteById(int id) throws DaoException, TransactionException {
         OrderDaoInterface dao = transaction.createDao(OrderDaoInterface.class);
-        return dao.deleteById(id);
+        dao.deleteById(id);
     }
 
     @Override
-    public boolean insert(Order order) throws DaoException, TransactionException {
+    public void insert(Order order) throws DaoException, TransactionException {
         OrderDaoInterface dao = transaction.createDao(OrderDaoInterface.class);
-        return dao.insert(order);
+        dao.insert(order);
     }
 
     @Override

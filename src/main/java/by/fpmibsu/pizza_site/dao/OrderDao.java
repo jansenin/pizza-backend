@@ -2,6 +2,7 @@ package by.fpmibsu.pizza_site.dao;
 
 import by.fpmibsu.pizza_site.entity.*;
 import by.fpmibsu.pizza_site.exception.DaoException;
+import org.apache.log4j.Logger;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -10,12 +11,13 @@ import java.util.List;
 public class OrderDao extends BaseDao implements OrderDaoInterface {
     private static final String SQL_SELECT_ALL_ORDERS = "SELECT * FROM orders";
     private static final String SQL_SELECT_ALL_USER_ORDERS = "SELECT * FROM orders WHERE user_id = ?";
-    private static final String SQL_SELECT_ID_OF_LAST_USER_ORDER = "SELECT MAX(order_id) AS order_id FROM orders WHERE user_id = ?";
     private static final String SQL_SELECT_ORDER_BY_ID = "SELECT * FROM orders WHERE order_id = ?";
     private static final String SQL_UPDATE_ORDER = "UPDATE orders SET status = CAST (? AS orderstatus), user_id = ? WHERE order_id = ?";
     private static final String SQL_DELETE_ORDER_BY_ID = "DELETE FROM orders WHERE order_id = ?";
     private static final String SQL_INSERT_PIZZA_IN_ORDER = "INSERT INTO order_pizzas(order_id, pizza_id) VALUES(?, ?)";
     private static final String SQL_INSERT_ORDER = "INSERT INTO orders(status, user_id) VALUES(CAST (? AS orderstatus), ?)";
+
+    private static final Logger logger = Logger.getLogger(IngredientDao.class);
 
     public OrderDao(Connection connection) {
         super(connection);
@@ -111,41 +113,36 @@ public class OrderDao extends BaseDao implements OrderDaoInterface {
         return order;
     }
     @Override
-    public boolean deleteById(int id) throws DaoException {
-        int updateRowsCount;
+    public void deleteById(int id) throws DaoException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE_ORDER_BY_ID)) {
             statement.setInt(1, id);
-            updateRowsCount = statement.executeUpdate();
+            statement.executeUpdate();
         } catch (SQLException e) {
             throw new DaoException(e);
         }
-        return updateRowsCount > 0;
     }
 
     @Override
-    public boolean insert(Order order) throws DaoException {
-        int updateRowsCount;
+    public void insert(Order order) throws DaoException {
         PreparedStatement statement = null;
         try {
-            statement = connection.prepareStatement(SQL_INSERT_ORDER);
+            statement = connection.prepareStatement(SQL_INSERT_ORDER, Statement.RETURN_GENERATED_KEYS);
             statement.setString(1, order.getOrderStatus().toString());
             statement.setInt(2, order.getUserId());
-            updateRowsCount = statement.executeUpdate();
-            if (updateRowsCount > 0) {
-                statement = connection.prepareStatement(SQL_SELECT_ID_OF_LAST_USER_ORDER);
-                statement.setInt(1, order.getUserId());
-                ResultSet resultSet = statement.executeQuery();
-                int orderId = 0;
-                while (resultSet.next()) {
-                    orderId = resultSet.getInt("order_id");
+            statement.executeUpdate();
+            ResultSet resultSet = statement.getGeneratedKeys();
+            if (resultSet.next()) {
+                    int orderId = resultSet.getInt(1);
                     order.setId(orderId);
-                }
                 for (var i : order.getPizzas()) {
                     statement = connection.prepareStatement(SQL_INSERT_PIZZA_IN_ORDER);
                     statement.setInt(1, orderId);
                     statement.setInt(2, i.getId());
                     statement.executeUpdate();
                 }
+            } else {
+                logger.error("There is no auto incremented index after trying to add record into table `orders`");
+                throw new DaoException();
             }
         } catch (SQLException e) {
             throw new DaoException(e);
@@ -156,6 +153,5 @@ public class OrderDao extends BaseDao implements OrderDaoInterface {
                 }
             } catch (SQLException ignored) {}
         }
-        return updateRowsCount > 0;
     }
 }

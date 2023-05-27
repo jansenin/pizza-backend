@@ -32,20 +32,20 @@ public class IngredientService extends Service implements IngredientServiceInter
     }
 
     @Override
-    public boolean deleteById(int id) throws DaoException, TransactionException {
+    public void deleteById(int id) throws DaoException, TransactionException {
         IngredientDaoInterface dao = transaction.createDao(IngredientDaoInterface.class);
-        return dao.deleteById(id);
+        dao.deleteById(id);
     }
 
     @Override
-    public boolean insert(Ingredient ingredient) throws DaoException, TransactionException {
+    public void insert(Ingredient ingredient) throws DaoException, TransactionException {
         IngredientDaoInterface dao = transaction.createDao(IngredientDaoInterface.class);
-        return dao.insert(ingredient);
+        dao.insert(ingredient);
     }
 
     @Override
-    public boolean deleteByIngredient(Ingredient ingredient) throws DaoException, TransactionException {
+    public void deleteByIngredient(Ingredient ingredient) throws DaoException, TransactionException {
         IngredientDaoInterface dao = transaction.createDao(IngredientDaoInterface.class);
-        return dao.deleteByIngredient(ingredient);
+        dao.deleteByIngredient(ingredient);
     }
 }

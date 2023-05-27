@@ -32,15 +32,15 @@ public class UserService extends Service implements UserServiceInterface {
     }
 
     @Override
-    public boolean deleteById(int id) throws DaoException, TransactionException {
+    public void deleteById(int id) throws DaoException, TransactionException {
         UserDaoInterface dao = transaction.createDao(UserDaoInterface.class);
-        return dao.deleteById(id);
+        dao.deleteById(id);
     }
 
     @Override
-    public boolean insert(User user) throws DaoException, TransactionException {
+    public void insert(User user) throws DaoException, TransactionException {
         UserDaoInterface dao = transaction.createDao(UserDaoInterface.class);
-        return dao.insert(user);
+        dao.insert(user);
     }
 
     @Override

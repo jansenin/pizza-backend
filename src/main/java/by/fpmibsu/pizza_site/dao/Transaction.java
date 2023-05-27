@@ -1,6 +1,7 @@
 package by.fpmibsu.pizza_site.dao;
 
 import by.fpmibsu.pizza_site.exception.TransactionException;
+import org.apache.log4j.Logger;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -15,7 +16,7 @@ public class Transaction implements TransactionInterface {
         classes.put(PizzaDaoInterface.class, PizzaDao.class);
         classes.put(OrderDaoInterface.class, OrderDao.class);
     }
-
+    private static final Logger logger = Logger.getLogger(IngredientDao.class);
     private final Connection connection;
 
     public Transaction(Connection connection) {
@@ -32,6 +33,7 @@ public class Transaction implements TransactionInterface {
                 dao.setConnection(connection);
                 return (Type)dao;
             } catch(InstantiationException | IllegalAccessException e) {
+                logger.error("It is impossible to create data access object", e);
                 throw new TransactionException(e);
             }
         }
@@ -43,6 +45,7 @@ public class Transaction implements TransactionInterface {
         try {
             connection.commit();
         } catch(SQLException e) {
+            logger.error("It is impossible to commit transaction", e);
             throw new TransactionException(e);
         }
     }
@@ -52,6 +55,7 @@ public class Transaction implements TransactionInterface {
         try {
             connection.rollback();
         } catch (SQLException e) {
+            logger.error("It is impossible to rollback transaction", e);
             throw new TransactionException(e);
         }
     }

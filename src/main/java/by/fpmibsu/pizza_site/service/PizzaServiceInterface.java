@@ -11,9 +11,9 @@ public interface PizzaServiceInterface extends ServiceInterface {
     List<Pizza> findAll() throws DaoException, TransactionException;
     Pizza findById(int id) throws DaoException, TransactionException;
     Pizza update(Pizza pizza) throws DaoException, TransactionException;
-    boolean deleteById(int id) throws DaoException, TransactionException;
-    boolean insert(Pizza pizza) throws DaoException, TransactionException;
+    void deleteById(int id) throws DaoException, TransactionException;
+    void insert(Pizza pizza) throws DaoException, TransactionException;
     List<Pizza> findAllInOrder(int order_id) throws DaoException, TransactionException;
-    boolean addIngredientInPizza(Pizza pizza, Ingredient ingredient) throws DaoException, TransactionException;
-    boolean removeIngredientFromPizza(Pizza pizza, Ingredient ingredient) throws DaoException, TransactionException;
+    void addIngredientInPizza(Pizza pizza, Ingredient ingredient) throws DaoException, TransactionException;
+    void removeIngredientFromPizza(Pizza pizza, Ingredient ingredient) throws DaoException, TransactionException;
 }
