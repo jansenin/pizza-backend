@@ -7,8 +7,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OrderDao implements OrderDaoInterface {
-    private final Connection connection;
+public class OrderDao extends BaseDao implements OrderDaoInterface {
     private static final String SQL_SELECT_ALL_ORDERS = "SELECT * FROM orders";
     private static final String SQL_SELECT_ALL_USER_ORDERS = "SELECT * FROM orders WHERE user_id = ?";
     private static final String SQL_SELECT_ID_OF_LAST_USER_ORDER = "SELECT MAX(order_id) AS order_id FROM orders WHERE user_id = ?";
@@ -19,7 +18,7 @@ public class OrderDao implements OrderDaoInterface {
     private static final String SQL_INSERT_ORDER = "INSERT INTO orders(status, user_id) VALUES(CAST (? AS orderstatus), ?)";
 
     public OrderDao(Connection connection) {
-        this.connection = connection;
+        super(connection);
     }
 
     @Override

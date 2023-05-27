@@ -8,8 +8,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserDao implements UserDaoInterface {
-    private final Connection connection;
+public class UserDao extends BaseDao implements UserDaoInterface {
     private static final String SQL_SELECT_ALL_USERS = "SELECT * FROM users;";
     private static final String SQL_SELECT_USER_BY_ID = "SELECT * FROM users WHERE user_id = ?";
     private static final String SQL_SELECT_USER_BY_LOGIN = "SELECT * FROM users WHERE login = ?";
@@ -19,7 +18,7 @@ public class UserDao implements UserDaoInterface {
     private static final String SQL_INSERT_USER = "INSERT INTO users(role, password, login) VALUES (CAST(? AS userrole), ?, ?)";
 
     public UserDao(Connection connection) {
-        this.connection = connection;
+        super(connection);
     }
 
     @Override

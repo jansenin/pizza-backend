@@ -7,8 +7,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class IngredientDao implements IngredientDaoInterface {
-    private final Connection connection;
+public class IngredientDao extends BaseDao implements IngredientDaoInterface {
     private static final String SQL_SELECT_ALL_INGREDIENTS = "SELECT * FROM ingredients;";
     private static final String SQL_SELECT_INGREDIENT_BY_ID = "SELECT * FROM ingredients WHERE ingredient_id = ?";
     private static final String SQL_SELECT_INGREDIENT_BY_NAME = "SELECT * FROM ingredients WHERE name = ?";
@@ -22,9 +21,8 @@ public class IngredientDao implements IngredientDaoInterface {
             "WHERE pizza_id = ? ";
 
     public IngredientDao(Connection connection) {
-        this.connection = connection;
+        super(connection);
     }
-
     @Override
     public List<Ingredient> findAll() throws DaoException {
         List<Ingredient> ingredients = new ArrayList<>();

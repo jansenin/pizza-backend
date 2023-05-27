@@ -8,8 +8,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PizzaDao implements PizzaDaoInterface {
-    private final Connection connection;
+public class PizzaDao extends BaseDao implements PizzaDaoInterface {
     private static final String SQL_SELECT_ALL_PIZZAS = "SELECT * FROM pizzas";
     private static final String SQL_SELECT_ALL_PIZZAS_IN_ORDER = "SELECT pizzas.pizza_id, name, price FROM pizzas " +
             "INNER JOIN order_pizzas USING(pizza_id)" +
@@ -27,7 +26,7 @@ public class PizzaDao implements PizzaDaoInterface {
             "VALUES(?, ?)";
 
     public PizzaDao(Connection connection) {
-        this.connection = connection;
+        super(connection);
     }
     @Override
     public List<Pizza> findAll() throws DaoException {
