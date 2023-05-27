@@ -2,14 +2,10 @@ package by.fpmibsu.pizza_site.dao;
 
 import by.fpmibsu.pizza_site.entity.Order;
 import by.fpmibsu.pizza_site.entity.User;
+import by.fpmibsu.pizza_site.exception.DaoException;
 
 import java.util.List;
 
-public interface OrderDaoInterface {
-    List<Order> findAll();
-    List<Order> findAllUserOrders(User user);
-    Order findOrderById(int id);
-    Order update(Order order);
-    boolean deleteById(int id);
-    boolean insert(Order order);
+public interface OrderDaoInterface extends DaoInterface<Order> {
+    List<Order> findAllUserOrders(User user) throws DaoException;
 }

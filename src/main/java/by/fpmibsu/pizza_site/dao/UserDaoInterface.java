@@ -1,16 +1,10 @@
 package by.fpmibsu.pizza_site.dao;
 
 import by.fpmibsu.pizza_site.entity.User;
+import by.fpmibsu.pizza_site.exception.DaoException;
 
-import java.util.List;
-
-public interface UserDaoInterface {
-    List<User> findAll();
-    User findUserById(int id);
-    User findUserByLogin(String login);
-    User updateUser(User user, String password);
-    boolean checkUserPassword(User user, String password);
-    boolean deleteById(int id);
-    boolean deleteByLogin(String login);
-    boolean insert(User user, String password);
+public interface UserDaoInterface extends DaoInterface<User> {
+    User findUserByLogin(String login) throws DaoException;
+    boolean checkUserPassword(User user, String password) throws DaoException;
+    void deleteByLogin(String login) throws DaoException;
 }

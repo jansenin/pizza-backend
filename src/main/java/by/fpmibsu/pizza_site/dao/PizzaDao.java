@@ -2,13 +2,14 @@ package by.fpmibsu.pizza_site.dao;
 
 import by.fpmibsu.pizza_site.entity.Ingredient;
 import by.fpmibsu.pizza_site.entity.Pizza;
+import by.fpmibsu.pizza_site.exception.DaoException;
 
+import org.apache.log4j.Logger;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PizzaDao implements PizzaDaoInterface {
-    private final Connection connection;
+public class PizzaDao extends BaseDao implements PizzaDaoInterface {
     private static final String SQL_SELECT_ALL_PIZZAS = "SELECT * FROM pizzas";
     private static final String SQL_SELECT_ALL_PIZZAS_IN_ORDER = "SELECT pizzas.pizza_id, name, price FROM pizzas " +
             "INNER JOIN order_pizzas USING(pizza_id)" +
@@ -25,15 +26,15 @@ public class PizzaDao implements PizzaDaoInterface {
     private static final String SQL_INSERT_PIZZA = "INSERT INTO pizzas(name, price) " +
             "VALUES(?, ?)";
 
+    private static final Logger logger = Logger.getLogger(IngredientDao.class);
+
     public PizzaDao(Connection connection) {
-        this.connection = connection;
+        super(connection);
     }
     @Override
-    public List<Pizza> findAll() {
+    public List<Pizza> findAll() throws DaoException {
         List<Pizza> pizzas = new ArrayList<>();
-        try {
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(SQL_SELECT_ALL_PIZZAS);
+        try (Statement statement = connection.createStatement();  ResultSet resultSet = statement.executeQuery(SQL_SELECT_ALL_PIZZAS)) {
             IngredientDao ingredientDao = new IngredientDao(connection);
             while (resultSet.next()) {
                 int id = resultSet.getInt("pizza_id");
@@ -43,18 +44,18 @@ public class PizzaDao implements PizzaDaoInterface {
                 pizzas.add(new Pizza(id, name, ingredients, price));
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DaoException(e);
         }
         return pizzas;
     }
 
     @Override
-    public List<Pizza> findAllInOrder(int order_id) {
+    public List<Pizza> findAllInOrder(int order_id) throws  DaoException {
         List<Pizza> pizzas = new ArrayList<>();
-        try {
-            PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL_PIZZAS_IN_ORDER);
+        ResultSet resultSet = null;
+        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL_PIZZAS_IN_ORDER)) {
             statement.setInt(1, order_id);
-            ResultSet resultSet = statement.executeQuery();
+            resultSet = statement.executeQuery();
             IngredientDao ingredientDao = new IngredientDao(connection);
             while (resultSet.next()) {
                 int id = resultSet.getInt("pizza_id");
@@ -64,18 +65,24 @@ public class PizzaDao implements PizzaDaoInterface {
                 pizzas.add(new Pizza(id, name, ingredients, price));
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DaoException(e);
+        } finally {
+            try {
+                if (resultSet != null) {
+                    resultSet.close();
+                }
+            } catch (SQLException ignored) {}
         }
         return pizzas;
     }
 
     @Override
-    public Pizza findPizzaById(int id) {
+    public Pizza findById(int id) throws DaoException {
         Pizza pizza = null;
-        try {
-            PreparedStatement statement = connection.prepareStatement(SQL_SELECT_PIZZA_BY_ID);
+        ResultSet resultSet = null;
+        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_PIZZA_BY_ID)) {
             statement.setInt(1, id);
-            ResultSet resultSet = statement.executeQuery();
+            resultSet = statement.executeQuery();
             IngredientDao ingredientDao = new IngredientDao(connection);
             while (resultSet.next()) {
                 id = resultSet.getInt("pizza_id");
@@ -85,18 +92,24 @@ public class PizzaDao implements PizzaDaoInterface {
                 pizza = new Pizza(id, name, ingredients, price);
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DaoException(e);
+        } finally {
+            try {
+                if (resultSet != null) {
+                    resultSet.close();
+                }
+            } catch (SQLException ignored) {}
         }
         return pizza;
     }
 
     @Override
-    public Pizza findPizzaByName(String name) {
+    public Pizza findPizzaByName(String name) throws DaoException {
         Pizza pizza = null;
-        try {
-            PreparedStatement statement = connection.prepareStatement(SQL_SELECT_PIZZA_BY_NAME);
+        ResultSet resultSet = null;
+        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_PIZZA_BY_NAME)) {
             statement.setString(1, name);
-            ResultSet resultSet = statement.executeQuery();
+            resultSet = statement.executeQuery();
             IngredientDao ingredientDao = new IngredientDao(connection);
             while (resultSet.next()) {
                 int id = resultSet.getInt("pizza_id");
@@ -106,110 +119,100 @@ public class PizzaDao implements PizzaDaoInterface {
                 pizza = new Pizza(id, name, ingredients, price);
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DaoException(e);
+        } finally {
+            try {
+                if (resultSet != null) {
+                    resultSet.close();
+                }
+            } catch (SQLException ignored) {}
         }
         return pizza;
     }
 
     @Override
-    public Pizza update(Pizza pizza) {
-        Pizza idCheckPizza = findPizzaById(pizza.getId());
+    public Pizza update(Pizza pizza) throws DaoException {
+        Pizza idCheckPizza = findById(pizza.getId());
         Pizza nameCheckPizza = findPizzaByName(pizza.getName());
         if (idCheckPizza == null || (nameCheckPizza != null && nameCheckPizza.getId() != pizza.getId())) {
             pizza.setId(Ingredient.ID_NOT_DEFINED);
             return pizza;
         }
-        try {
-            PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_PIZZA);
+        try (PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_PIZZA)) {
             statement.setString(1, pizza.getName());
             statement.setInt(2, pizza.getPrice());
             statement.setInt(3, pizza.getId());
             statement.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DaoException(e);
         }
         return pizza;
     }
 
     @Override
-    public boolean addIngredientInPizza(Pizza pizza, Ingredient ingredient) {
+    public void addIngredientInPizza(Pizza pizza, Ingredient ingredient) throws DaoException {
         if (pizza.getIngredients().contains(ingredient)) {
-            return true;
+            return;
         }
-        int updateRowsCount;
-        try {
-            PreparedStatement statement = connection.prepareStatement(SQL_INSERT_INGREDIENT_IN_PIZZA);
+        try (PreparedStatement statement = connection.prepareStatement(SQL_INSERT_INGREDIENT_IN_PIZZA, Statement.RETURN_GENERATED_KEYS)) {
             statement.setInt(1, pizza.getId());
             statement.setInt(2, ingredient.getId());
-            updateRowsCount = statement.executeUpdate();
-            if (updateRowsCount > 0) {
-                pizza.getIngredients().add(ingredient);
-            }
+            statement.executeUpdate();
+            pizza.getIngredients().add(ingredient);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DaoException(e);
         }
-        return updateRowsCount > 0;
     }
 
     @Override
-    public boolean removeIngredientFromPizza(Pizza pizza, Ingredient ingredient) {
+    public void removeIngredientFromPizza(Pizza pizza, Ingredient ingredient) throws DaoException {
         if (!pizza.getIngredients().contains(ingredient)) {
-            return true;
+            return;
         }
-        int updateRowsCount;
-        try {
-            PreparedStatement statement = connection.prepareStatement(SQL_DELETE_INGREDIENT_FROM_PIZZA);
+        try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE_INGREDIENT_FROM_PIZZA)) {
             statement.setInt(1, pizza.getId());
             statement.setInt(2, ingredient.getId());
-            updateRowsCount = statement.executeUpdate();
-            if (updateRowsCount > 0) {
-                pizza.getIngredients().remove(ingredient);
-            }
+            pizza.getIngredients().remove(ingredient);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DaoException(e);
         }
-        return updateRowsCount > 0;
     }
 
     @Override
-    public boolean deleteById(int id) {
-        int updateRowsCount;
-        try {
-            PreparedStatement statement = connection.prepareStatement(SQL_DELETE_PIZZA_BY_ID);
+    public void deleteById(int id) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE_PIZZA_BY_ID)) {
             statement.setInt(1, id);
-            updateRowsCount = statement.executeUpdate();
+            statement.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DaoException(e);
         }
-        return updateRowsCount > 0;
     }
 
     @Override
-    public boolean deleteByName(String name) {
-        int updateRowsCount;
-        try {
-            PreparedStatement statement = connection.prepareStatement(SQL_DELETE_PIZZA_BY_NAME);
+    public void deleteByName(String name) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE_PIZZA_BY_NAME)) {
             statement.setString(1, name);
-            updateRowsCount = statement.executeUpdate();
+            statement.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DaoException(e);
         }
-        return updateRowsCount > 0;
     }
 
     @Override
-    public boolean insert(Pizza pizza) {
+    public void insert(Pizza pizza) throws DaoException {
         if (findPizzaByName(pizza.getName()) != null) {
-            return false;
+            pizza.setId(Pizza.ID_NOT_DEFINED);
+            return;
         }
-        int updateRowsCount;
+        PreparedStatement statement = null;
         try {
-            PreparedStatement statement = connection.prepareStatement(SQL_INSERT_PIZZA);
+            statement = connection.prepareStatement(SQL_INSERT_PIZZA, Statement.RETURN_GENERATED_KEYS);
             statement.setString(1, pizza.getName());
             statement.setInt(2, pizza.getPrice());
-            updateRowsCount = statement.executeUpdate();
-            if (updateRowsCount > 0) {
-                int pizzaId = findPizzaByName(pizza.getName()).getId();
+            statement.executeUpdate();
+            ResultSet resultSet = statement.getGeneratedKeys();
+            if (resultSet.next()) {
+                int pizzaId = resultSet.getInt(1);
                 pizza.setId(pizzaId);
                 for (var i : pizza.getIngredients()) {
                     statement = connection.prepareStatement(SQL_INSERT_INGREDIENT_IN_PIZZA);
@@ -217,10 +220,18 @@ public class PizzaDao implements PizzaDaoInterface {
                     statement.setInt(2, i.getId());
                     statement.executeUpdate();
                 }
+            } else {
+                logger.error("There is no auto incremented index after trying to add record into table `pizzas`");
+                throw new DaoException();
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DaoException(e);
+        } finally {
+            try {
+                if (statement != null) {
+                    statement.close();
+                }
+            } catch (SQLException ignored) {}
         }
-        return updateRowsCount > 0;
     }
 }

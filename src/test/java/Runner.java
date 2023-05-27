@@ -1,6 +1,7 @@
 import by.fpmibsu.pizza_site.dao.*;
 import by.fpmibsu.pizza_site.database.ConnectionCreator;
 import by.fpmibsu.pizza_site.entity.*;
+import by.fpmibsu.pizza_site.exception.DaoException;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -9,7 +10,7 @@ import java.util.List;
 
 
 public class Runner {
-    public static void main(String[] args) throws SQLException {
+    public static void main(String[] args) throws SQLException, DaoException {
         Connection userConnection = ConnectionCreator.createConnection();
         UserDao userDao = new UserDao(userConnection);
         System.out.println("вывод всех пользователей:");
@@ -18,7 +19,7 @@ public class Runner {
             System.out.println(i.toString());
         }
         System.out.println("\nвывод пользователя с первым id:");
-        User user = userDao.findUserById(1);
+        User user = userDao.findById(1);
         System.out.println(user.toString());
         System.out.println("\nвывод пользователя с логином parfen:");
         user = userDao.findUserByLogin("parfen");
@@ -27,8 +28,8 @@ public class Runner {
         user = userDao.findUserByLogin("ttt");
         System.out.println("пользователь не найден = " + (user == null));
         System.out.println("\nдобавление двух новых пользователей:");
-        userDao.insert(new User(UserRole.CLIENT, "guy1", User.ID_NOT_DEFINED), "abacaba");
-        userDao.insert(user = new User(UserRole.CLIENT, "guy2", User.ID_NOT_DEFINED), "dddd");
+        userDao.insert(new User(UserRole.CLIENT, "guy1", User.ID_NOT_DEFINED, "abacaba"));
+        userDao.insert(user = new User(UserRole.CLIENT, "guy2", User.ID_NOT_DEFINED, "dddd"));
         users = userDao.findAll();
         for (var i : users) {
             System.out.println(i.toString());
@@ -38,8 +39,11 @@ public class Runner {
         System.out.println("\nредактируем guy2:");
         user.setLogin("BIGGUY");
         user.setRole(UserRole.STAFF);
-        userDao.updateUser(user, "aaa");
-        System.out.println("является ли aaa паролем для BIGGUY = " + userDao.checkUserPassword(user, "aaa"));
+        userDao.update(user);
+        user.setPassword("aaa");
+        System.out.println("является ли aaa паролем для BIGGUY до апдейта пароля = " + userDao.checkUserPassword(user, "aaa"));
+        userDao.update(user);
+        System.out.println("является ли aaa паролем для BIGGUY после апдейта пароля = " + userDao.checkUserPassword(user, "aaa"));
         users = userDao.findAll();
         for (var i : users) {
             System.out.println(i.toString());
@@ -55,7 +59,7 @@ public class Runner {
         System.out.println("\nвывод ингредиента с первым id:");
         Connection ingredientConnection = ConnectionCreator.createConnection();
         IngredientDao ingredientDao = new IngredientDao(ingredientConnection);
-        Ingredient ingredient = ingredientDao.findIngredientById(1);
+        Ingredient ingredient = ingredientDao.findById(1);
         System.out.println(ingredient.toString());
         System.out.println("\nвывод всех ингредиентов:");
         List<Ingredient> ingredients = ingredientDao.findAll();
@@ -121,7 +125,7 @@ public class Runner {
             System.out.println(i.toString());
         }
         System.out.println("\nпоиск заказов пользователя со вторым id");
-        orders = orderDao.findAllUserOrders(userDao.findUserById(2));
+        orders = orderDao.findAllUserOrders(userDao.findById(2));
         for (var i : orders) {
             System.out.println(i.toString());
         }
@@ -133,13 +137,13 @@ public class Runner {
             System.out.println(i.toString());
         }
         System.out.println("удаление добавленных заказов по id");
-        orders = orderDao.findAllUserOrders(userDao.findUserById(1));
+        orders = orderDao.findAllUserOrders(userDao.findById(1));
         for (var i : orders) {
-            orderDao.deleteById(i.getOrderId());
+            orderDao.deleteById(i.getId());
         }
-        orders = orderDao.findAllUserOrders(userDao.findUserById(2));
+        orders = orderDao.findAllUserOrders(userDao.findById(2));
         for (var i : orders) {
-            orderDao.deleteById(i.getOrderId());
+            orderDao.deleteById(i.getId());
         }
         orders = orderDao.findAll();
         for (var i : orders) {
