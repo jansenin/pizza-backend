@@ -1,6 +1,7 @@
 import by.fpmibsu.pizza_site.dao.*;
 import by.fpmibsu.pizza_site.database.ConnectionCreator;
 import by.fpmibsu.pizza_site.entity.*;
+import by.fpmibsu.pizza_site.exception.DaoException;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -9,7 +10,7 @@ import java.util.List;
 
 
 public class Runner {
-    public static void main(String[] args) throws SQLException {
+    public static void main(String[] args) throws SQLException, DaoException {
         Connection userConnection = ConnectionCreator.createConnection();
         UserDao userDao = new UserDao(userConnection);
         System.out.println("вывод всех пользователей:");
