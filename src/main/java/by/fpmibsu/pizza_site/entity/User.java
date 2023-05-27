@@ -1,5 +1,4 @@
 package by.fpmibsu.pizza_site.entity;
-
 public class User extends Entity {
     private UserRole role;
     private String login;
@@ -15,7 +14,6 @@ public class User extends Entity {
     public void setRole(UserRole role) {
         this.role = role;
     }
-
     public UserRole getRole() {
         return role;
     }

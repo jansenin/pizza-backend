@@ -7,6 +7,7 @@ public class Order extends Entity {
     private OrderStatus orderStatus;
     private List<Pizza> pizzas;
     static public final int ID_NOT_DEFINED = -1;
+  
     public Order(int id, List<Pizza> pizzas, OrderStatus orderStatus, int userId) {
         this.id = id;
         this.userId = userId;
@@ -40,6 +41,6 @@ public class Order extends Entity {
 
     @Override
     public String toString() {
-        return "Order [ orderId = " + id+ " userId = " + userId + " orderStatus = " + orderStatus.toString() + " pizzas = " + pizzas.toString() + " ]";
+        return "Order [ orderId = " + id + " userId = " + userId + " orderStatus = " + orderStatus.toString() + " pizzas = " + pizzas.toString() + " ]";
     }
 }

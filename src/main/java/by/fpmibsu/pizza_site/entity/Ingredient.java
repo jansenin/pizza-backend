@@ -1,5 +1,4 @@
 package by.fpmibsu.pizza_site.entity;
-
 public class Ingredient extends Entity {
     private String name;
     static public final int ID_NOT_DEFINED = -1;

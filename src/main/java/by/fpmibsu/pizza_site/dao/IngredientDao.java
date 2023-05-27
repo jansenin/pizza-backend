@@ -1,12 +1,14 @@
 package by.fpmibsu.pizza_site.dao;
 
 import by.fpmibsu.pizza_site.entity.Ingredient;
+
 import by.fpmibsu.pizza_site.exception.DaoException;
 import org.apache.log4j.Logger;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class IngredientDao extends BaseDao implements IngredientDaoInterface {
     private static final String SQL_SELECT_ALL_INGREDIENTS = "SELECT * FROM ingredients;";
@@ -21,6 +23,7 @@ public class IngredientDao extends BaseDao implements IngredientDaoInterface {
             "INNER JOIN pizzas USING(pizza_id) " +
             "WHERE pizza_id = ? ";
 
+
     private static final Logger logger = Logger.getLogger(IngredientDao.class);
 
     public IngredientDao(Connection connection) {
@@ -30,12 +33,14 @@ public class IngredientDao extends BaseDao implements IngredientDaoInterface {
     public List<Ingredient> findAll() throws DaoException {
         List<Ingredient> ingredients = new ArrayList<>();
         try (Statement statement = connection.createStatement(); ResultSet resultSet = statement.executeQuery(SQL_SELECT_ALL_INGREDIENTS)) {
+
             while (resultSet.next()) {
                 int id = resultSet.getInt("ingredient_id");
                 String name = resultSet.getString("name");
                 ingredients.add(new Ingredient(id, name));
             }
         } catch (SQLException e) {
+
             throw new DaoException(e);
         }
         return ingredients;
