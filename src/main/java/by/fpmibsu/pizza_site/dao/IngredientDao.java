@@ -122,7 +122,13 @@ public class IngredientDao extends BaseDao implements IngredientDaoInterface {
     public Ingredient update(Ingredient ingredient) throws DaoException {
         Ingredient idCheckIngredient = findById(ingredient.getId());
         Ingredient nameCheckIngredient = findIngredientByName(ingredient.getName());
-        if (idCheckIngredient == null || (nameCheckIngredient != null && nameCheckIngredient.getId() != ingredient.getId())) {
+        if (idCheckIngredient == null) {
+            logger.info("attempt to update ingredient with no existing id");
+            ingredient.setId(Ingredient.ID_NOT_DEFINED);
+            return ingredient;
+        }
+        if (nameCheckIngredient != null && nameCheckIngredient.getId() != ingredient.getId()) {
+            logger.info("attempt to set ingredient already existing name");
             ingredient.setId(Ingredient.ID_NOT_DEFINED);
             return ingredient;
         }
@@ -165,6 +171,7 @@ public class IngredientDao extends BaseDao implements IngredientDaoInterface {
     public void insert(Ingredient ingredient) throws DaoException {
         if (findIngredientByName(ingredient.getName()) != null) {
             ingredient.setId(Ingredient.ID_NOT_DEFINED);
+            logger.info("Attempt to add existing ingredient " + ingredient.getName());
             return;
         }
         try (PreparedStatement statement = connection.prepareStatement(SQL_INSERT_INGREDIENT, Statement.RETURN_GENERATED_KEYS)) {

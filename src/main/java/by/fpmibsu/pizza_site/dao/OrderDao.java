@@ -100,6 +100,7 @@ public class OrderDao extends BaseDao implements OrderDaoInterface {
         Order checkOrder = findById(order.getId());
         if (checkOrder == null) {
             order.setId(Order.ID_NOT_DEFINED);
+            logger.info("attempt to update order with no existing id");
             return order;
         }
         try (PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_ORDER)) {

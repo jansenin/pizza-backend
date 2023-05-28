@@ -134,7 +134,13 @@ public class PizzaDao extends BaseDao implements PizzaDaoInterface {
     public Pizza update(Pizza pizza) throws DaoException {
         Pizza idCheckPizza = findById(pizza.getId());
         Pizza nameCheckPizza = findPizzaByName(pizza.getName());
-        if (idCheckPizza == null || (nameCheckPizza != null && nameCheckPizza.getId() != pizza.getId())) {
+        if (idCheckPizza == null) {
+            logger.info("attempt to update pizza with no existing id");
+            pizza.setId(Ingredient.ID_NOT_DEFINED);
+            return pizza;
+        }
+        if (nameCheckPizza != null && nameCheckPizza.getId() != pizza.getId()) {
+            logger.info("attempt to set pizza already existing name");
             pizza.setId(Ingredient.ID_NOT_DEFINED);
             return pizza;
         }
@@ -202,6 +208,7 @@ public class PizzaDao extends BaseDao implements PizzaDaoInterface {
     @Override
     public void insert(Pizza pizza) throws DaoException {
         if (findPizzaByName(pizza.getName()) != null) {
+            logger.info("Attempt to add existing pizza " + pizza.getName());
             pizza.setId(Pizza.ID_NOT_DEFINED);
             return;
         }
