@@ -18,4 +18,9 @@ public class Ingredient extends Entity {
     public String toString() {
         return "Ingredient [ id = " + id + " name = " + name + " ]";
     }
+
+    @Override
+    public boolean equals(Object object) {
+        return super.equals(object);
+    }
 }

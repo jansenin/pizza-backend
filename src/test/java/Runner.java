@@ -103,7 +103,7 @@ public class Runner {
         System.out.println("\nдобавление мясной и домашней пиццы");
         Pizza pizza = new Pizza(Pizza.ID_NOT_DEFINED, "мясная", new ArrayList<>(List.of(ingredientDao.findIngredientByName("бекон"), ingredientDao.findIngredientByName("курица"))), 1300);
         pizzaDao.insert(pizza);
-        pizza = new Pizza(Pizza.ID_NOT_DEFINED, "домашняя", new ArrayList<>(List.of(ingredientDao.findIngredientByName("cыр"), ingredientDao.findIngredientByName("помидор"))), 900);
+        pizza = new Pizza(Pizza.ID_NOT_DEFINED, "домашняя", new ArrayList<>(List.of(ingredientDao.findIngredientByName("сыр"), ingredientDao.findIngredientByName("помидор"))), 900);
         pizzaDao.insert(pizza);
         pizzas = pizzaDao.findAll();
         for (var i : pizzas) {
