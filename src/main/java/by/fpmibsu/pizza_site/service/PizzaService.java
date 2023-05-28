@@ -45,12 +45,6 @@ public class PizzaService extends Service implements PizzaServiceInterface {
     }
 
     @Override
-    public List<Pizza> findAllInOrder(int order_id) throws DaoException, TransactionException {
-        PizzaDaoInterface dao = transaction.createDao(PizzaDaoInterface.class);
-        return dao.findAllInOrder(order_id);
-    }
-
-    @Override
     public void addIngredientInPizza(Pizza pizza, Ingredient ingredient) throws DaoException, TransactionException {
         PizzaDaoInterface dao = transaction.createDao(PizzaDaoInterface.class);
         dao.addIngredientInPizza(pizza, ingredient);

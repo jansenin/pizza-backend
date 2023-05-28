@@ -29,13 +29,15 @@ class IngredientServiceTest {
         IngredientServiceInterface service = serviceFactory.getService(IngredientServiceInterface.class);
         List<Ingredient> ingredients = service.findAll();
         assertEquals(14, ingredients.size());
+        assertTrue(ingredients.contains(new Ingredient(89, "ананас")));
+        assertTrue(ingredients.contains(new Ingredient(86, "курица")));
     }
 
     @org.junit.jupiter.api.Test
     void findById() throws TransactionException, DaoException {
         IngredientServiceInterface service = serviceFactory.getService(IngredientServiceInterface.class);
-        Ingredient ingredient = service.findById(86);
-        assertEquals(new Ingredient(86, "ананас"), ingredient);
+        Ingredient ingredient = service.findById(89);
+        assertEquals(new Ingredient(89, "ананас"), ingredient);
         ingredient = service.findById(90);
         assertEquals(new Ingredient(90, "сладкий перец"), ingredient);
         ingredient = service.findById(91);

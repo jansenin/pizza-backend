@@ -172,6 +172,7 @@ public class PizzaDao extends BaseDao implements PizzaDaoInterface {
         try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE_INGREDIENT_FROM_PIZZA)) {
             statement.setInt(1, pizza.getId());
             statement.setInt(2, ingredient.getId());
+            statement.executeUpdate();
             pizza.getIngredients().remove(ingredient);
         } catch (SQLException e) {
             throw new DaoException(e);

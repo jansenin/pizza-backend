@@ -15,15 +15,17 @@ public abstract class Entity implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-        if (object != null) {
-            if (object != this) {
-                if (object.getClass() == getClass() && id != 0) {
-                    return id == ((Entity) object).id;
-                }
-                return false;
-            }
+        if (object == null || object.getClass() != getClass()) {
+            return false;
+        }
+        if (object == this) {
             return true;
         }
-        return false;
+        return id == ((Entity)object).id;
+    }
+
+    @Override
+    public int hashCode() {
+        return id != 0 ? Integer.hashCode(id) : 0;
     }
 }
