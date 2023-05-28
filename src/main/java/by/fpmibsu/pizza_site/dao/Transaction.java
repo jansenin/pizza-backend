@@ -3,6 +3,8 @@ package by.fpmibsu.pizza_site.dao;
 import by.fpmibsu.pizza_site.exception.TransactionException;
 import org.apache.log4j.Logger;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
@@ -29,10 +31,11 @@ public class Transaction implements TransactionInterface {
         Class<? extends BaseDao> value = classes.get(key);
         if(value != null) {
             try {
-                BaseDao dao = value.newInstance();
+                Constructor<? extends BaseDao> constructor = value.getConstructor(Connection.class);
+                BaseDao dao = constructor.newInstance(connection);
                 dao.setConnection(connection);
                 return (Type)dao;
-            } catch(InstantiationException | IllegalAccessException e) {
+            } catch(InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
                 logger.error("It is impossible to create data access object", e);
                 throw new TransactionException(e);
             }

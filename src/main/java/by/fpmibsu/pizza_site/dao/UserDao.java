@@ -97,7 +97,13 @@ public class UserDao extends BaseDao implements UserDaoInterface {
     public User update(User user) throws DaoException {
         User idCheckUser = findById(user.getId());
         User loginCheckUser = findUserByLogin(user.getLogin());
-        if (idCheckUser == null || (loginCheckUser != null && loginCheckUser.getId() != user.getId())) {
+        if (idCheckUser == null) {
+            logger.info("attempt to update user with no existing id");
+            user.setId(User.ID_NOT_DEFINED);
+            return user;
+        }
+        if (loginCheckUser != null && loginCheckUser.getId() != user.getId()) {
+            logger.info("attempt to set user already existing name");
             user.setId(User.ID_NOT_DEFINED);
             return user;
         }
@@ -155,6 +161,7 @@ public class UserDao extends BaseDao implements UserDaoInterface {
     public void insert(User user) throws DaoException {
         if (findUserByLogin(user.getLogin()) != null) {
             user.setId(User.ID_NOT_DEFINED);
+            logger.info("Attempt to add existing user " + user.getLogin());
             return;
         }
         try (PreparedStatement statement = connection.prepareStatement(SQL_INSERT_USER, Statement.RETURN_GENERATED_KEYS)){

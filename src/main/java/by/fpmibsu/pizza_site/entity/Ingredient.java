@@ -1,4 +1,5 @@
 package by.fpmibsu.pizza_site.entity;
+
 public class Ingredient extends Entity {
     private String name;
     static public final int ID_NOT_DEFINED = -1;
@@ -12,6 +13,15 @@ public class Ingredient extends Entity {
     }
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (!super.equals(object)) {
+            return false;
+        }
+        Ingredient toCompare = (Ingredient) object;
+        return name.equals(toCompare.name);
     }
 
     @Override

@@ -4,7 +4,9 @@ import by.fpmibsu.pizza_site.dao.Transaction;
 import by.fpmibsu.pizza_site.dao.TransactionFactory;
 import by.fpmibsu.pizza_site.exception.TransactionException;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Proxy;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -25,19 +27,19 @@ public class ServiceFactory implements ServiceFactoryInterface {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public <Type extends Service> Type getService(Class<Type> key) {
+    public <Type extends ServiceInterface> Type getService(Class<Type> key) {
         Class<? extends Service> value = services.get(key);
         if (value != null) {
             try {
                 ClassLoader classLoader = value.getClassLoader();
                 Class<?>[] interfaces = {key};
                 Transaction transaction = factory.createTransaction();
-                Service service = value.newInstance();
-                service.setTransaction(transaction);
+                Constructor<? extends Service> constructor = value.getDeclaredConstructor(Transaction.class);
+                Service service = constructor.newInstance(transaction);
                 InvocationHandler handler = new ServiceInvocationHandler(service);
                 return (Type) Proxy.newProxyInstance(classLoader, interfaces, handler);
-            } catch (InstantiationException | IllegalAccessException e) {
+            } catch (NoSuchMethodException  | InstantiationException | IllegalAccessException | InvocationTargetException
+                    e) {
                 throw new RuntimeException(e);
             }
         }

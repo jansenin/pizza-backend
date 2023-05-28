@@ -1,5 +1,6 @@
 package by.fpmibsu.pizza_site.entity;
 
+import java.util.HashSet;
 import java.util.List;
 
 public class Order extends Entity {
@@ -37,6 +38,18 @@ public class Order extends Entity {
 
     public void setUserId(int userId) {
         this.userId = userId;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (!super.equals(object)) {
+            return false;
+        }
+        Order toCompare = (Order) object;
+        return id == toCompare.id
+                && userId == toCompare.userId
+                && orderStatus.equals(toCompare.orderStatus)
+                && new HashSet<>(pizzas).equals(new HashSet<>(toCompare.pizzas));
     }
 
     @Override

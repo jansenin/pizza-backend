@@ -1,5 +1,6 @@
 package by.fpmibsu.pizza_site.entity;
 
+import java.util.HashSet;
 import java.util.List;
 
 public class Pizza extends Entity {
@@ -36,6 +37,17 @@ public class Pizza extends Entity {
 
     public void setPrice(int price) {
         this.price = price;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (!super.equals(object)) {
+            return false;
+        }
+        Pizza toCompare = (Pizza) object;
+        return name.equals(toCompare.name)
+                && price == toCompare.price
+                && new HashSet<>(ingredients).equals(new HashSet<>(toCompare.ingredients));
     }
 
     @Override

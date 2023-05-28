@@ -35,6 +35,17 @@ public class User extends Entity {
     }
 
     @Override
+    public boolean equals(Object object) {
+        if (!super.equals(object)) {
+            return false;
+        }
+        User toCompare = (User) object;
+        return login.equals(toCompare.login)
+                && role.equals(toCompare.role)
+                && password.equals(toCompare.password);
+    }
+
+    @Override
     public String toString() {
         return "User [ id = " + id + " login = " + login + " role = " + role.toString() + " password = " + password + " ]";
     }

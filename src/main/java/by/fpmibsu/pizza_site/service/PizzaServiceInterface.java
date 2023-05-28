@@ -13,7 +13,6 @@ public interface PizzaServiceInterface extends ServiceInterface {
     Pizza update(Pizza pizza) throws DaoException, TransactionException;
     void deleteById(int id) throws DaoException, TransactionException;
     void insert(Pizza pizza) throws DaoException, TransactionException;
-    List<Pizza> findAllInOrder(int order_id) throws DaoException, TransactionException;
     void addIngredientInPizza(Pizza pizza, Ingredient ingredient) throws DaoException, TransactionException;
     void removeIngredientFromPizza(Pizza pizza, Ingredient ingredient) throws DaoException, TransactionException;
 }
