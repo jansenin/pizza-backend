@@ -4,8 +4,7 @@ import java.util.Objects;
 
 public class Ingredient extends Entity {
     private String name;
-    public Ingredient(Integer id, String name) {
-        this.id = id;
+    public Ingredient(String name) {
         this.name = name;
     }
 

@@ -6,10 +6,9 @@ public class User extends Entity {
     private UserRole role;
     private String login;
     private String password;
-    public User(UserRole role, String login, Integer id, String password) {
+    public User(UserRole role, String login, String password) {
         this.password = password;
         this.role = role;
-        this.id = id;
         this.login = login;
     }
 

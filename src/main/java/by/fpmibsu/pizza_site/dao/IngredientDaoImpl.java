@@ -35,9 +35,11 @@ public class IngredientDaoImpl extends BaseDaoImpl implements IngredientDao {
         try (Statement statement = connection.createStatement(); ResultSet resultSet = statement.executeQuery(SQL_SELECT_ALL_INGREDIENTS)) {
 
             while (resultSet.next()) {
-                int id = resultSet.getInt("ingredient_id");
+                Integer id = resultSet.getInt("ingredient_id");
                 String name = resultSet.getString("name");
-                ingredients.add(new Ingredient(id, name));
+                Ingredient ingredient = new Ingredient(name);
+                ingredient.setId(id);
+                ingredients.add(ingredient);
             }
         } catch (SQLException e) {
 
@@ -54,9 +56,11 @@ public class IngredientDaoImpl extends BaseDaoImpl implements IngredientDao {
             statement.setInt(1, pizzaId);
             resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                int id = resultSet.getInt("ingredient_id");
+                Integer id = resultSet.getInt("ingredient_id");
                 String name = resultSet.getString("name");
-                ingredients.add(new Ingredient(id, name));
+                Ingredient ingredient = new Ingredient(name);
+                ingredient.setId(id);
+                ingredients.add(ingredient);
             }
         } catch (SQLException e) {
             throw new DaoException(e);
@@ -80,7 +84,8 @@ public class IngredientDaoImpl extends BaseDaoImpl implements IngredientDao {
             while (resultSet.next()) {
                 id = resultSet.getInt("ingredient_id");
                 String name = resultSet.getString("name");
-                ingredient = new Ingredient(id, name);
+                ingredient = new Ingredient(name);
+                ingredient.setId(id);
             }
         } catch (SQLException e) {
             throw new DaoException(e);
@@ -102,9 +107,10 @@ public class IngredientDaoImpl extends BaseDaoImpl implements IngredientDao {
             statement.setString(1, name);
             resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                int id = resultSet.getInt("ingredient_id");
+                Integer id = resultSet.getInt("ingredient_id");
                 name = resultSet.getString("name");
-                ingredient = new Ingredient(id, name);
+                ingredient = new Ingredient(name);
+                ingredient.setId(id);
             }
         } catch (SQLException e) {
             throw new DaoException(e);

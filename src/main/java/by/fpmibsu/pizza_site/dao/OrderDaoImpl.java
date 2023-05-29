@@ -29,11 +29,13 @@ public class OrderDaoImpl extends BaseDaoImpl implements OrderDao {
         try (Statement statement = connection.createStatement(); ResultSet resultSet = statement.executeQuery(SQL_SELECT_ALL_ORDERS)) {
             PizzaDaoImpl pizzaDao = new PizzaDaoImpl(connection);
             while (resultSet.next()) {
-                int order_id = resultSet.getInt("order_id");
+                Integer orderId = resultSet.getInt("order_id");
                 OrderStatus status = OrderStatus.valueOf(resultSet.getString("status"));
-                int user_id = resultSet.getInt("user_id");
-                List<Pizza> pizzas = pizzaDao.findAllInOrder(order_id);
-                orders.add(new Order(order_id, pizzas, status, user_id));
+                Integer userId = resultSet.getInt("user_id");
+                List<Pizza> pizzas = pizzaDao.findAllInOrder(orderId);
+                Order order = new Order(pizzas, status, userId);
+                order.setId(orderId);
+                orders.add(order);
             }
         } catch (SQLException e) {
             throw new DaoException(e);
@@ -50,11 +52,13 @@ public class OrderDaoImpl extends BaseDaoImpl implements OrderDao {
             resultSet = statement.executeQuery();
             PizzaDaoImpl pizzaDao = new PizzaDaoImpl(connection);
             while (resultSet.next()) {
-                int order_id = resultSet.getInt("order_id");
+                int orderId = resultSet.getInt("order_id");
                 OrderStatus status = OrderStatus.valueOf(resultSet.getString("status"));
-                int user_id = resultSet.getInt("user_id");
-                List<Pizza> pizzas = pizzaDao.findAllInOrder(order_id);
-                orders.add(new Order(order_id, pizzas, status, user_id));
+                int userId = resultSet.getInt("user_id");
+                List<Pizza> pizzas = pizzaDao.findAllInOrder(orderId);
+                Order order = new Order(pizzas, status, userId);
+                order.setId(orderId);
+                orders.add(order);
             }
         } catch (SQLException e) {
             throw new DaoException(e);
@@ -77,11 +81,12 @@ public class OrderDaoImpl extends BaseDaoImpl implements OrderDao {
             resultSet = statement.executeQuery();
             PizzaDaoImpl pizzaDao = new PizzaDaoImpl(connection);
             while (resultSet.next()) {
-                int order_id = resultSet.getInt("order_id");
+                int orderId = resultSet.getInt("order_id");
                 OrderStatus status = OrderStatus.valueOf(resultSet.getString("status"));
-                int user_id = resultSet.getInt("user_id");
-                List<Pizza> pizzas = pizzaDao.findAllInOrder(order_id);
-                order = new Order(order_id, pizzas, status, user_id);
+                int userId = resultSet.getInt("user_id");
+                List<Pizza> pizzas = pizzaDao.findAllInOrder(orderId);
+                order = new Order(pizzas, status, userId);
+                order.setId(orderId);
             }
         } catch (SQLException e) {
             throw new DaoException(e);

@@ -8,8 +8,7 @@ public class Pizza extends Entity {
     private int price;
     private String name;
     private List<Ingredient> ingredients;
-    public Pizza(Integer id, String name, List<Ingredient> ingredients, int price) {
-        this.id = id;
+    public Pizza(String name, List<Ingredient> ingredients, int price) {
         this.name = name;
         this.ingredients = ingredients;
         this.price = price;

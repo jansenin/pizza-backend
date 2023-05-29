@@ -29,11 +29,13 @@ public class UserDaoImpl extends BaseDaoImpl implements UserDao {
         List<User> users = new ArrayList<>();
         try (Statement statement = connection.createStatement(); ResultSet resultSet = statement.executeQuery(SQL_SELECT_ALL_USERS)) {
             while (resultSet.next()) {
-                int id = resultSet.getInt("user_id");
+                Integer id = resultSet.getInt("user_id");
                 UserRole role = UserRole.valueOf(resultSet.getString("role"));
                 String login = resultSet.getString("login");
                 String password = resultSet.getString("password");
-                users.add(new User(role, login, id, password));
+                User user = new User(role, login, password);
+                user.setId(id);
+                users.add(user);
             }
         } catch (SQLException e) {
             throw new DaoException(e);
@@ -53,7 +55,8 @@ public class UserDaoImpl extends BaseDaoImpl implements UserDao {
                 UserRole role = UserRole.valueOf(resultSet.getString("role"));
                 String login = resultSet.getString("login");
                 String password = resultSet.getString("password");
-                user = new User(role, login, id, password);
+                user = new User(role, login, password);
+                user.setId(id);
             }
         } catch (SQLException e) {
             throw new DaoException(e);
@@ -79,7 +82,8 @@ public class UserDaoImpl extends BaseDaoImpl implements UserDao {
                 UserRole role = UserRole.valueOf(resultSet.getString("role"));
                 login = resultSet.getString("login");
                 String password = resultSet.getString("password");
-                user = new User(role, login, id, password);
+                user = new User(role, login, password);
+                user.setId(id);
             }
         } catch (SQLException e) {
             throw new DaoException(e);

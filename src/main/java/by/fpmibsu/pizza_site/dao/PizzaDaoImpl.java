@@ -37,11 +37,13 @@ public class PizzaDaoImpl extends BaseDaoImpl implements PizzaDao {
         try (Statement statement = connection.createStatement();  ResultSet resultSet = statement.executeQuery(SQL_SELECT_ALL_PIZZAS)) {
             IngredientDaoImpl ingredientDao = new IngredientDaoImpl(connection);
             while (resultSet.next()) {
-                int id = resultSet.getInt("pizza_id");
+                Integer id = resultSet.getInt("pizza_id");
                 String name = resultSet.getString("name");
                 int price = resultSet.getInt("price");
                 List<Ingredient> ingredients = ingredientDao.findAllForPizza(id);
-                pizzas.add(new Pizza(id, name, ingredients, price));
+                Pizza pizza = new Pizza(name, ingredients, price);
+                pizza.setId(id);
+                pizzas.add(pizza);
             }
         } catch (SQLException e) {
             throw new DaoException(e);
@@ -58,11 +60,13 @@ public class PizzaDaoImpl extends BaseDaoImpl implements PizzaDao {
             resultSet = statement.executeQuery();
             IngredientDaoImpl ingredientDao = new IngredientDaoImpl(connection);
             while (resultSet.next()) {
-                int id = resultSet.getInt("pizza_id");
+                Integer id = resultSet.getInt("pizza_id");
                 String name = resultSet.getString("name");
                 int price = resultSet.getInt("price");
                 List<Ingredient> ingredients = ingredientDao.findAllForPizza(id);
-                pizzas.add(new Pizza(id, name, ingredients, price));
+                Pizza pizza = new Pizza(name, ingredients, price);
+                pizza.setId(id);
+                pizzas.add(pizza);
             }
         } catch (SQLException e) {
             throw new DaoException(e);
@@ -89,7 +93,8 @@ public class PizzaDaoImpl extends BaseDaoImpl implements PizzaDao {
                 String name = resultSet.getString("name");
                 int price = resultSet.getInt("price");
                 List<Ingredient> ingredients = ingredientDao.findAllForPizza(id);
-                pizza = new Pizza(id, name, ingredients, price);
+                pizza = new Pizza(name, ingredients, price);
+                pizza.setId(id);
             }
         } catch (SQLException e) {
             throw new DaoException(e);
@@ -116,7 +121,8 @@ public class PizzaDaoImpl extends BaseDaoImpl implements PizzaDao {
                 name = resultSet.getString("name");
                 int price = resultSet.getInt("price");
                 List<Ingredient> ingredients = ingredientDao.findAllForPizza(id);
-                pizza = new Pizza(id, name, ingredients, price);
+                pizza = new Pizza(name, ingredients, price);
+                pizza.setId(id);
             }
         } catch (SQLException e) {
             throw new DaoException(e);

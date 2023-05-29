@@ -28,8 +28,8 @@ public class Runner {
         user = userDao.findUserByLogin("ttt");
         System.out.println("пользователь не найден = " + (user == null));
         System.out.println("\nдобавление двух новых пользователей:");
-        userDao.insert(new User(UserRole.CLIENT, "guy1", null, "abacaba"));
-        userDao.insert(user = new User(UserRole.CLIENT, "guy2",null, "dddd"));
+        userDao.insert(new User(UserRole.CLIENT, "guy1", "abacaba"));
+        userDao.insert(user = new User(UserRole.CLIENT, "guy2","dddd"));
         users = userDao.findAll();
         for (var i : users) {
             System.out.println(i.toString());
@@ -67,9 +67,9 @@ public class Runner {
             System.out.println(i.toString());
         }
         System.out.println("\nдобавление трюфеля и кокоса");
-        ingredient = new Ingredient(null, "кокос");
+        ingredient = new Ingredient("кокос");
         ingredientDao.insert(ingredient);
-        ingredient = new Ingredient(null, "трюфель");
+        ingredient = new Ingredient("трюфель");
         ingredientDao.insert(ingredient);
         ingredients = ingredientDao.findAll();
         for (var i : ingredients) {
@@ -101,9 +101,9 @@ public class Runner {
             System.out.println(i.toString());
         }
         System.out.println("\nдобавление мясной и домашней пиццы");
-        Pizza pizza = new Pizza(null, "мясная", new ArrayList<>(List.of(ingredientDao.findIngredientByName("бекон"), ingredientDao.findIngredientByName("курица"))), 1300);
+        Pizza pizza = new Pizza("мясная", new ArrayList<>(List.of(ingredientDao.findIngredientByName("бекон"), ingredientDao.findIngredientByName("курица"))), 1300);
         pizzaDao.insert(pizza);
-        pizza = new Pizza(null, "домашняя", new ArrayList<>(List.of(ingredientDao.findIngredientByName("сыр"), ingredientDao.findIngredientByName("помидор"))), 900);
+        pizza = new Pizza("домашняя", new ArrayList<>(List.of(ingredientDao.findIngredientByName("сыр"), ingredientDao.findIngredientByName("помидор"))), 900);
         pizzaDao.insert(pizza);
         pizzas = pizzaDao.findAll();
         for (var i : pizzas) {
@@ -117,9 +117,9 @@ public class Runner {
             System.out.println(i.toString());
         }
         System.out.println("\nдобавление двух заказов:");
-        orderDao.insert(new Order(null, new ArrayList<>(List.of(pizzaDao.findPizzaByName("гавайская"), pizzaDao.findPizzaByName("мясная"))), OrderStatus.IN_PROCESS, 1));
-        orderDao.insert(new Order(null, new ArrayList<>(List.of(pizzaDao.findPizzaByName("домашняя"))), OrderStatus.COMPLETED, 2));
-        orderDao.insert(new Order(null, new ArrayList<>(List.of(pizzaDao.findPizzaByName("мясная"))), OrderStatus.IN_PROCESS, 2));
+        orderDao.insert(new Order(new ArrayList<>(List.of(pizzaDao.findPizzaByName("гавайская"), pizzaDao.findPizzaByName("мясная"))), OrderStatus.IN_PROCESS, 1));
+        orderDao.insert(new Order(new ArrayList<>(List.of(pizzaDao.findPizzaByName("домашняя"))), OrderStatus.COMPLETED, 2));
+        orderDao.insert(new Order(new ArrayList<>(List.of(pizzaDao.findPizzaByName("мясная"))), OrderStatus.IN_PROCESS, 2));
         orders = orderDao.findAll();
         for (var i : orders) {
             System.out.println(i.toString());

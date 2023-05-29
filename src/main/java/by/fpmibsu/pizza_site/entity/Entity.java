@@ -3,7 +3,7 @@ package by.fpmibsu.pizza_site.entity;
 import java.io.Serializable;
 
 public abstract class Entity implements Serializable {
-    protected Integer id;
+    protected Integer id = null;
 
     public Integer getId() {
         return id;

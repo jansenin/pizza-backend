@@ -29,21 +29,33 @@ class IngredientServiceTest {
         IngredientService service = serviceFactory.getService(IngredientService.class);
         List<Ingredient> ingredients = service.findAll();
         assertEquals(14, ingredients.size());
-        assertTrue(ingredients.contains(new Ingredient(89, "ананас")));
-        assertTrue(ingredients.contains(new Ingredient(86, "курица")));
+        Ingredient checkIngredient = new Ingredient("ананас");
+        checkIngredient.setId(89);
+        assertTrue(ingredients.contains(checkIngredient));
+        checkIngredient.setName("курица");
+        checkIngredient.setId(86);
+        assertTrue(ingredients.contains(checkIngredient));
     }
 
     @org.junit.jupiter.api.Test
     void findById() throws TransactionException, DaoException {
         IngredientService service = serviceFactory.getService(IngredientService.class);
         Ingredient ingredient = service.findById(89);
-        assertEquals(new Ingredient(89, "ананас"), ingredient);
+        Ingredient checkIngredient = new Ingredient("ананас");
+        checkIngredient.setId(89);
+        assertEquals(checkIngredient, ingredient);
         ingredient = service.findById(90);
-        assertEquals(new Ingredient(90, "сладкий перец"), ingredient);
+        checkIngredient.setName("сладкий перец");
+        checkIngredient.setId(90);
+        assertEquals(checkIngredient, ingredient);
         ingredient = service.findById(91);
-        assertEquals(new Ingredient(91, "томатный соус"), ingredient);
+        checkIngredient.setName("томатный соус");
+        checkIngredient.setId(91);
+        assertEquals(checkIngredient, ingredient);
         ingredient = service.findById(92);
-        assertEquals(new Ingredient(92, "соус песто"), ingredient);
+        checkIngredient.setName("соус песто");
+        checkIngredient.setId(92);
+        assertEquals(checkIngredient, ingredient);
         ingredient = service.findById(14);
         assertNull(ingredient);
         ingredient = service.findById(23);
@@ -65,11 +77,13 @@ class IngredientServiceTest {
         assertEquals("курица", ingredient.getName());
         assertEquals(service.findById(86), ingredient);
 
-        ingredient = new Ingredient(17, "несуществующий");
+        ingredient = new Ingredient("несуществующий");
+        ingredient.setId(17);
         service.update(ingredient);
         assertNull(ingredient.getId());
 
-        ingredient = new Ingredient(91, "ананас");
+        ingredient = new Ingredient("ананас");
+        ingredient.setId(91);
         service.update(ingredient);
         assertNull(ingredient.getId());
     }
@@ -77,14 +91,14 @@ class IngredientServiceTest {
     @org.junit.jupiter.api.Test
     void insertDelete() throws TransactionException, DaoException {
         IngredientService service = serviceFactory.getService(IngredientService.class);
-        Ingredient insertIngredient = new Ingredient(null, "кокос");
+        Ingredient insertIngredient = new Ingredient("кокос");
         service.insert(insertIngredient);
         assertNotEquals(null, insertIngredient.getId());
         assertEquals(service.findById(insertIngredient.getId()), insertIngredient);
         service.deleteById(insertIngredient.getId());
         assertNull(service.findById(insertIngredient.getId()));
 
-        insertIngredient = new Ingredient(null, "трюфель");
+        insertIngredient = new Ingredient("трюфель");
         service.insert(insertIngredient);
         assertNotEquals(null, insertIngredient.getId());
         assertEquals(service.findById(insertIngredient.getId()), insertIngredient);
@@ -92,11 +106,11 @@ class IngredientServiceTest {
         assertNull(service.findById(insertIngredient.getId()));
 
 
-        insertIngredient = new Ingredient(null, "ананас");
+        insertIngredient = new Ingredient("ананас");
         service.insert(insertIngredient);
         assertNull(insertIngredient.getId());
 
-        insertIngredient = new Ingredient(null, "сыр");
+        insertIngredient = new Ingredient("сыр");
         service.insert(insertIngredient);
         assertNull(insertIngredient.getId());
     }

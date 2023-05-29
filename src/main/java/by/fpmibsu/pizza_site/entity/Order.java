@@ -9,8 +9,7 @@ public class Order extends Entity {
     private OrderStatus orderStatus;
     private List<Pizza> pizzas;
   
-    public Order(Integer id, List<Pizza> pizzas, OrderStatus orderStatus, Integer userId) {
-        this.id = id;
+    public Order(List<Pizza> pizzas, OrderStatus orderStatus, Integer userId) {
         this.userId = userId;
         this.pizzas = pizzas;
         this.orderStatus = orderStatus;
