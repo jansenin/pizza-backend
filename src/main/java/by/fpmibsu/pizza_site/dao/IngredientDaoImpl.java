@@ -18,11 +18,6 @@ public class IngredientDaoImpl extends BaseDaoImpl implements IngredientDao {
     private static final String SQL_DELETE_INGREDIENT_BY_ID = "DELETE FROM ingredients WHERE ingredient_id = ?";
     private static final String SQL_DELETE_INGREDIENT_BY_NAME = "DELETE FROM ingredients WHERE name = ?";
     private static final String SQL_INSERT_INGREDIENT = "INSERT INTO ingredients(name) VALUES (?)";
-    private static final String SQL_SELECT_ALL_INGREDIENTS_IN_PIZZA = "SELECT ingredient_id, ingredients.name " +
-            "FROM ingredients INNER JOIN pizza_ingredients USING(ingredient_id) " +
-            "INNER JOIN pizzas USING(pizza_id) " +
-            "WHERE pizza_id = ? ";
-
 
     private static final Logger logger = Logger.getLogger(IngredientDaoImpl.class);
 
@@ -44,32 +39,6 @@ public class IngredientDaoImpl extends BaseDaoImpl implements IngredientDao {
         } catch (SQLException e) {
 
             throw new DaoException(e);
-        }
-        return ingredients;
-    }
-
-    @Override
-    public List<Ingredient> findAllForPizza(Integer pizzaId) throws DaoException {
-        List<Ingredient> ingredients = new ArrayList<>();
-        ResultSet resultSet = null;
-        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL_INGREDIENTS_IN_PIZZA)) {
-            statement.setInt(1, pizzaId);
-            resultSet = statement.executeQuery();
-            while (resultSet.next()) {
-                Integer id = resultSet.getInt("ingredient_id");
-                String name = resultSet.getString("name");
-                Ingredient ingredient = new Ingredient(name);
-                ingredient.setId(id);
-                ingredients.add(ingredient);
-            }
-        } catch (SQLException e) {
-            throw new DaoException(e);
-        } finally {
-            try {
-                if (resultSet != null) {
-                    resultSet.close();
-                }
-            } catch (SQLException ignored) {}
         }
         return ingredients;
     }

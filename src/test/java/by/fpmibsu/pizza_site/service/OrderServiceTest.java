@@ -96,13 +96,11 @@ class OrderServiceTest {
     @Test
     void findAllUserOrders() throws TransactionException, DaoException {
         OrderService service = serviceFactory.getService(OrderService.class);
-        User user = new User(UserRole.ADMIN, "dzen","secret");
-        List<Order> orders = service.findAllUserOrders(user);
+        List<Order> orders = service.findAllUserOrders(1);
         assertEquals(1, orders.size());
         assertEquals(service.findById(74), orders.get(0));
 
-        user = new User(UserRole.CLIENT, "anon", "snthd");
-        orders = service.findAllUserOrders(user);
+        orders = service.findAllUserOrders(40);
         assertTrue(orders.isEmpty());
     }
 }

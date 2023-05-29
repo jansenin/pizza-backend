@@ -1,5 +1,6 @@
 package by.fpmibsu.pizza_site.service;
 
+import by.fpmibsu.pizza_site.dao.IngredientDao;
 import by.fpmibsu.pizza_site.dao.PizzaDao;
 import by.fpmibsu.pizza_site.dao.TransactionImpl;
 import by.fpmibsu.pizza_site.entity.Ingredient;
@@ -14,16 +15,29 @@ public class PizzaServiceImpl extends ServiceImpl implements PizzaService {
         super(transaction);
     }
 
+
+    private void LoadData(Pizza pizza) throws TransactionException, DaoException {
+        IngredientDao ingredientDao = transaction.createDao(IngredientDao.class);
+        for (Ingredient ingredient : pizza.getIngredients()) {
+            ingredient.setName(ingredientDao.findById(ingredient.getId()).getName());
+        }
+    }
     @Override
     public List<Pizza> findAll() throws DaoException, TransactionException {
-        PizzaDao dao = transaction.createDao(PizzaDao.class);
-        return dao.findAll();
+        PizzaDao pizzaDao = transaction.createDao(PizzaDao.class);
+        List<Pizza> pizzas = pizzaDao.findAll();
+        for (Pizza pizza : pizzas) {
+            LoadData(pizza);
+        }
+        return pizzas;
     }
 
     @Override
     public Pizza findById(Integer id) throws DaoException, TransactionException {
-        PizzaDao dao = transaction.createDao(PizzaDao.class);
-        return dao.findById(id);
+        PizzaDao pizzaDao = transaction.createDao(PizzaDao.class);
+        Pizza pizza = pizzaDao.findById(id);
+        LoadData(pizza);
+        return pizza;
     }
 
     @Override
@@ -45,14 +59,16 @@ public class PizzaServiceImpl extends ServiceImpl implements PizzaService {
     }
 
     @Override
-    public void addIngredientInPizza(Pizza pizza, Ingredient ingredient) throws DaoException, TransactionException {
-        PizzaDao dao = transaction.createDao(PizzaDao.class);
-        dao.addIngredientInPizza(pizza, ingredient);
+    public void addIngredientInPizza(Pizza pizza, Integer ingredientId) throws DaoException, TransactionException {
+        PizzaDao pizzaDao = transaction.createDao(PizzaDao.class);
+        IngredientDao ingredientDao = transaction.createDao(IngredientDao.class);
+        pizzaDao.addIngredientInPizza(pizza, ingredientId);
+        pizza.getIngredients().get(pizza.getIngredients().size() - 1).setName(ingredientDao.findById(ingredientId).getName());
     }
 
     @Override
-    public void removeIngredientFromPizza(Pizza pizza, Ingredient ingredient) throws DaoException, TransactionException {
+    public void removeIngredientFromPizza(Pizza pizza, Integer ingredientId) throws DaoException, TransactionException {
         PizzaDao dao = transaction.createDao(PizzaDao.class);
-        dao.removeIngredientFromPizza(pizza, ingredient);
+        dao.removeIngredientFromPizza(pizza, ingredientId);
     }
 }

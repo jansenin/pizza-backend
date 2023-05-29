@@ -10,6 +10,8 @@ import java.util.List;
 
 public class OrderDaoImpl extends BaseDaoImpl implements OrderDao {
     private static final String SQL_SELECT_ALL_ORDERS = "SELECT * FROM orders";
+    private static final String SQL_SELECT_ALL_ID_OF_PIZZAS_FOR_ORDER = "SELECT pizza_id FROM order_pizzas " +
+            "WHERE order_id = ?";
     private static final String SQL_SELECT_ALL_USER_ORDERS = "SELECT * FROM orders WHERE user_id = ?";
     private static final String SQL_SELECT_ORDER_BY_ID = "SELECT * FROM orders WHERE order_id = ?";
     private static final String SQL_UPDATE_ORDER = "UPDATE orders SET status = CAST (? AS orderstatus), user_id = ? WHERE order_id = ?";
@@ -27,12 +29,17 @@ public class OrderDaoImpl extends BaseDaoImpl implements OrderDao {
     public List<Order> findAll() throws DaoException {
         List<Order> orders = new ArrayList<>();
         try (Statement statement = connection.createStatement(); ResultSet resultSet = statement.executeQuery(SQL_SELECT_ALL_ORDERS)) {
-            PizzaDaoImpl pizzaDao = new PizzaDaoImpl(connection);
             while (resultSet.next()) {
                 Integer orderId = resultSet.getInt("order_id");
                 OrderStatus status = OrderStatus.valueOf(resultSet.getString("status"));
                 Integer userId = resultSet.getInt("user_id");
-                List<Pizza> pizzas = pizzaDao.findAllInOrder(orderId);
+                List<Integer> pizzasId = findAllIdOfPizzasForOrder(orderId);
+                List<Pizza> pizzas = new ArrayList<>();
+                for (Integer i : pizzasId) {
+                    Pizza pizza = new Pizza();
+                    pizza.setId(i);
+                    pizzas.add(pizza);
+                }
                 Order order = new Order(pizzas, status, userId);
                 order.setId(orderId);
                 orders.add(order);
@@ -44,18 +51,23 @@ public class OrderDaoImpl extends BaseDaoImpl implements OrderDao {
     }
 
     @Override
-    public List<Order> findAllUserOrders(User user) throws DaoException {
+    public List<Order> findAllUserOrders(Integer userId) throws DaoException {
         List<Order> orders = new ArrayList<>();
         ResultSet resultSet = null;
         try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL_USER_ORDERS)) {
-            statement.setInt(1, user.getId());
+            statement.setInt(1, userId);
             resultSet = statement.executeQuery();
-            PizzaDaoImpl pizzaDao = new PizzaDaoImpl(connection);
             while (resultSet.next()) {
                 int orderId = resultSet.getInt("order_id");
                 OrderStatus status = OrderStatus.valueOf(resultSet.getString("status"));
-                int userId = resultSet.getInt("user_id");
-                List<Pizza> pizzas = pizzaDao.findAllInOrder(orderId);
+                userId = resultSet.getInt("user_id");
+                List<Integer> pizzasId = findAllIdOfPizzasForOrder(orderId);
+                List<Pizza> pizzas = new ArrayList<>();
+                for (Integer i : pizzasId) {
+                    Pizza pizza = new Pizza();
+                    pizza.setId(i);
+                    pizzas.add(pizza);
+                }
                 Order order = new Order(pizzas, status, userId);
                 order.setId(orderId);
                 orders.add(order);
@@ -73,18 +85,45 @@ public class OrderDaoImpl extends BaseDaoImpl implements OrderDao {
     }
 
     @Override
+    public List<Integer> findAllIdOfPizzasForOrder(Integer id) throws DaoException {
+        List<Integer> ids = new ArrayList<>();
+        ResultSet resultSet = null;
+        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL_ID_OF_PIZZAS_FOR_ORDER)) {
+            statement.setInt(1, id);
+            resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                ids.add(resultSet.getInt("pizza_id"));
+            }
+        } catch (SQLException e) {
+            throw new DaoException(e);
+        } finally {
+            try {
+                if (resultSet != null) {
+                    resultSet.close();
+                }
+            } catch (SQLException ignored) {}
+        }
+        return ids;
+    }
+
+    @Override
     public Order findById(Integer id) throws DaoException {
         ResultSet resultSet = null;
         Order order = null;
         try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ORDER_BY_ID)) {
             statement.setInt(1, id);
             resultSet = statement.executeQuery();
-            PizzaDaoImpl pizzaDao = new PizzaDaoImpl(connection);
             while (resultSet.next()) {
                 int orderId = resultSet.getInt("order_id");
                 OrderStatus status = OrderStatus.valueOf(resultSet.getString("status"));
                 int userId = resultSet.getInt("user_id");
-                List<Pizza> pizzas = pizzaDao.findAllInOrder(orderId);
+                List<Integer> pizzasId = findAllIdOfPizzasForOrder(orderId);
+                List<Pizza> pizzas = new ArrayList<>();
+                for (Integer i : pizzasId) {
+                    Pizza pizza = new Pizza();
+                    pizza.setId(i);
+                    pizzas.add(pizza);
+                }
                 order = new Order(pizzas, status, userId);
                 order.setId(orderId);
             }

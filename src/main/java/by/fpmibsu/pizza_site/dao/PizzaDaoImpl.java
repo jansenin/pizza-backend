@@ -1,5 +1,6 @@
 package by.fpmibsu.pizza_site.dao;
 
+import by.fpmibsu.pizza_site.entity.Entity;
 import by.fpmibsu.pizza_site.entity.Ingredient;
 import by.fpmibsu.pizza_site.entity.Pizza;
 import by.fpmibsu.pizza_site.exception.DaoException;
@@ -11,9 +12,8 @@ import java.util.List;
 
 public class PizzaDaoImpl extends BaseDaoImpl implements PizzaDao {
     private static final String SQL_SELECT_ALL_PIZZAS = "SELECT * FROM pizzas";
-    private static final String SQL_SELECT_ALL_PIZZAS_IN_ORDER = "SELECT pizzas.pizza_id, name, price FROM pizzas " +
-            "INNER JOIN order_pizzas USING(pizza_id)" +
-            "WHERE order_id = ?";
+    private static final String SQL_SELECT_ALL_ID_OF_INGREDIENTS_FOR_PIZZA = "SELECT ingredient_id FROM pizza_ingredients " +
+            "WHERE pizza_id = ?";
     private static final String SQL_SELECT_PIZZA_BY_ID = "SELECT * FROM pizzas WHERE pizza_id = ?";
     private static final String SQL_SELECT_PIZZA_BY_NAME = "SELECT * FROM pizzas WHERE name = ?";
     private static final String SQL_UPDATE_PIZZA = "UPDATE pizzas SET name = ?, price = ? WHERE pizza_id = ?";
@@ -31,16 +31,24 @@ public class PizzaDaoImpl extends BaseDaoImpl implements PizzaDao {
     public PizzaDaoImpl(Connection connection) {
         super(connection);
     }
+
+
+
     @Override
     public List<Pizza> findAll() throws DaoException {
         List<Pizza> pizzas = new ArrayList<>();
         try (Statement statement = connection.createStatement();  ResultSet resultSet = statement.executeQuery(SQL_SELECT_ALL_PIZZAS)) {
-            IngredientDaoImpl ingredientDao = new IngredientDaoImpl(connection);
             while (resultSet.next()) {
                 Integer id = resultSet.getInt("pizza_id");
                 String name = resultSet.getString("name");
                 int price = resultSet.getInt("price");
-                List<Ingredient> ingredients = ingredientDao.findAllForPizza(id);
+                List<Integer> ingredientsId = findAllIngredientsIdForPizza(id);
+                List<Ingredient> ingredients = new ArrayList<>();
+                for (Integer i : ingredientsId) {
+                    Ingredient ingredient = new Ingredient();
+                    ingredient.setId(i);
+                    ingredients.add(ingredient);
+                }
                 Pizza pizza = new Pizza(name, ingredients, price);
                 pizza.setId(id);
                 pizzas.add(pizza);
@@ -52,21 +60,14 @@ public class PizzaDaoImpl extends BaseDaoImpl implements PizzaDao {
     }
 
     @Override
-    public List<Pizza> findAllInOrder(Integer orderId) throws  DaoException {
-        List<Pizza> pizzas = new ArrayList<>();
+    public List<Integer> findAllIngredientsIdForPizza(Integer id) throws DaoException {
+        List<Integer> ids = new ArrayList<>();
         ResultSet resultSet = null;
-        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL_PIZZAS_IN_ORDER)) {
-            statement.setInt(1, orderId);
+        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL_ID_OF_INGREDIENTS_FOR_PIZZA)) {
+            statement.setInt(1, id);
             resultSet = statement.executeQuery();
-            IngredientDaoImpl ingredientDao = new IngredientDaoImpl(connection);
             while (resultSet.next()) {
-                Integer id = resultSet.getInt("pizza_id");
-                String name = resultSet.getString("name");
-                int price = resultSet.getInt("price");
-                List<Ingredient> ingredients = ingredientDao.findAllForPizza(id);
-                Pizza pizza = new Pizza(name, ingredients, price);
-                pizza.setId(id);
-                pizzas.add(pizza);
+                ids.add(resultSet.getInt("ingredient_id"));
             }
         } catch (SQLException e) {
             throw new DaoException(e);
@@ -77,7 +78,7 @@ public class PizzaDaoImpl extends BaseDaoImpl implements PizzaDao {
                 }
             } catch (SQLException ignored) {}
         }
-        return pizzas;
+        return ids;
     }
 
     @Override
@@ -87,12 +88,17 @@ public class PizzaDaoImpl extends BaseDaoImpl implements PizzaDao {
         try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_PIZZA_BY_ID)) {
             statement.setInt(1, id);
             resultSet = statement.executeQuery();
-            IngredientDaoImpl ingredientDao = new IngredientDaoImpl(connection);
             while (resultSet.next()) {
                 id = resultSet.getInt("pizza_id");
                 String name = resultSet.getString("name");
                 int price = resultSet.getInt("price");
-                List<Ingredient> ingredients = ingredientDao.findAllForPizza(id);
+                List<Integer> ingredientsId = findAllIngredientsIdForPizza(id);
+                List<Ingredient> ingredients = new ArrayList<>();
+                for (Integer i : ingredientsId) {
+                    Ingredient ingredient = new Ingredient();
+                    ingredient.setId(i);
+                    ingredients.add(ingredient);
+                }
                 pizza = new Pizza(name, ingredients, price);
                 pizza.setId(id);
             }
@@ -115,12 +121,17 @@ public class PizzaDaoImpl extends BaseDaoImpl implements PizzaDao {
         try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_PIZZA_BY_NAME)) {
             statement.setString(1, name);
             resultSet = statement.executeQuery();
-            IngredientDaoImpl ingredientDao = new IngredientDaoImpl(connection);
             while (resultSet.next()) {
                 int id = resultSet.getInt("pizza_id");
                 name = resultSet.getString("name");
                 int price = resultSet.getInt("price");
-                List<Ingredient> ingredients = ingredientDao.findAllForPizza(id);
+                List<Integer> ingredientsId = findAllIngredientsIdForPizza(id);
+                List<Ingredient> ingredients = new ArrayList<>();
+                for (Integer i : ingredientsId) {
+                    Ingredient ingredient = new Ingredient();
+                    ingredient.setId(i);
+                    ingredients.add(ingredient);
+                }
                 pizza = new Pizza(name, ingredients, price);
                 pizza.setId(id);
             }
@@ -162,14 +173,16 @@ public class PizzaDaoImpl extends BaseDaoImpl implements PizzaDao {
     }
 
     @Override
-    public void addIngredientInPizza(Pizza pizza, Ingredient ingredient) throws DaoException {
-        if (pizza.getIngredients().contains(ingredient)) {
+    public void addIngredientInPizza(Pizza pizza, Integer ingredientId) throws DaoException {
+        if (pizza.getIngredients().stream().map(Entity::getId).toList().contains(ingredientId)) {
             return;
         }
         try (PreparedStatement statement = connection.prepareStatement(SQL_INSERT_INGREDIENT_IN_PIZZA, Statement.RETURN_GENERATED_KEYS)) {
             statement.setInt(1, pizza.getId());
-            statement.setInt(2, ingredient.getId());
+            statement.setInt(2, ingredientId);
             statement.executeUpdate();
+            Ingredient ingredient = new Ingredient();
+            ingredient.setId(ingredientId);
             pizza.getIngredients().add(ingredient);
         } catch (SQLException e) {
             throw new DaoException(e);
@@ -177,15 +190,15 @@ public class PizzaDaoImpl extends BaseDaoImpl implements PizzaDao {
     }
 
     @Override
-    public void removeIngredientFromPizza(Pizza pizza, Ingredient ingredient) throws DaoException {
-        if (!pizza.getIngredients().contains(ingredient)) {
+    public void removeIngredientFromPizza(Pizza pizza, Integer ingredientId) throws DaoException {
+        if (!pizza.getIngredients().stream().map(Entity::getId).toList().contains(ingredientId)) {
             return;
         }
         try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE_INGREDIENT_FROM_PIZZA)) {
             statement.setInt(1, pizza.getId());
-            statement.setInt(2, ingredient.getId());
+            statement.setInt(2, ingredientId);
             statement.executeUpdate();
-            pizza.getIngredients().remove(ingredient);
+            pizza.getIngredients().removeIf(i -> i.getId().equals(ingredientId));
         } catch (SQLException e) {
             throw new DaoException(e);
         }
