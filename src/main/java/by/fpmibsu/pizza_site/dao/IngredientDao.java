@@ -47,11 +47,11 @@ public class IngredientDao extends BaseDao implements IngredientDaoInterface {
     }
 
     @Override
-    public List<Ingredient> findAllForPizza(int pizza_id) throws DaoException {
+    public List<Ingredient> findAllForPizza(Integer pizzaId) throws DaoException {
         List<Ingredient> ingredients = new ArrayList<>();
         ResultSet resultSet = null;
         try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL_INGREDIENTS_IN_PIZZA)) {
-            statement.setInt(1, pizza_id);
+            statement.setInt(1, pizzaId);
             resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 int id = resultSet.getInt("ingredient_id");
@@ -71,7 +71,7 @@ public class IngredientDao extends BaseDao implements IngredientDaoInterface {
     }
 
     @Override
-    public Ingredient findById(int id) throws DaoException {
+    public Ingredient findById(Integer id) throws DaoException {
         Ingredient ingredient = null;
         ResultSet resultSet = null;
         try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_INGREDIENT_BY_ID)) {
@@ -124,12 +124,12 @@ public class IngredientDao extends BaseDao implements IngredientDaoInterface {
         Ingredient nameCheckIngredient = findIngredientByName(ingredient.getName());
         if (idCheckIngredient == null) {
             logger.info("attempt to update ingredient with no existing id");
-            ingredient.setId(Ingredient.ID_NOT_DEFINED);
+            ingredient.setId(null);
             return ingredient;
         }
-        if (nameCheckIngredient != null && nameCheckIngredient.getId() != ingredient.getId()) {
+        if (nameCheckIngredient != null && !nameCheckIngredient.getId().equals(ingredient.getId())) {
             logger.info("attempt to set ingredient already existing name");
-            ingredient.setId(Ingredient.ID_NOT_DEFINED);
+            ingredient.setId(null);
             return ingredient;
         }
         try (PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_INGREDIENT)) {
@@ -148,7 +148,7 @@ public class IngredientDao extends BaseDao implements IngredientDaoInterface {
     }
 
     @Override
-    public void deleteById(int id) throws DaoException {
+    public void deleteById(Integer id) throws DaoException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE_INGREDIENT_BY_ID)) {
             statement.setInt(1, id);
             statement.executeUpdate();
@@ -170,7 +170,7 @@ public class IngredientDao extends BaseDao implements IngredientDaoInterface {
     @Override
     public void insert(Ingredient ingredient) throws DaoException {
         if (findIngredientByName(ingredient.getName()) != null) {
-            ingredient.setId(Ingredient.ID_NOT_DEFINED);
+            ingredient.setId(null);
             logger.info("Attempt to add existing ingredient " + ingredient.getName());
             return;
         }

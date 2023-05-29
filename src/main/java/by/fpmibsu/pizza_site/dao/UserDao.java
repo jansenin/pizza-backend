@@ -42,7 +42,7 @@ public class UserDao extends BaseDao implements UserDaoInterface {
     }
 
     @Override
-    public User findById(int id) throws DaoException {
+    public User findById(Integer id) throws DaoException {
         User user = null;
         ResultSet resultSet = null;
         try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_USER_BY_ID)) {
@@ -99,12 +99,12 @@ public class UserDao extends BaseDao implements UserDaoInterface {
         User loginCheckUser = findUserByLogin(user.getLogin());
         if (idCheckUser == null) {
             logger.info("attempt to update user with no existing id");
-            user.setId(User.ID_NOT_DEFINED);
+            user.setId(null);
             return user;
         }
-        if (loginCheckUser != null && loginCheckUser.getId() != user.getId()) {
+        if (loginCheckUser != null && !loginCheckUser.getId().equals(user.getId())) {
             logger.info("attempt to set user already existing name");
-            user.setId(User.ID_NOT_DEFINED);
+            user.setId(null);
             return user;
         }
         try (PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_USER)) {
@@ -138,7 +138,7 @@ public class UserDao extends BaseDao implements UserDaoInterface {
     }
 
     @Override
-    public void deleteById(int id) throws DaoException {
+    public void deleteById(Integer id) throws DaoException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE_USER_BY_ID)) {
             statement.setInt(1, id);
             statement.executeUpdate();
@@ -160,7 +160,7 @@ public class UserDao extends BaseDao implements UserDaoInterface {
     @Override
     public void insert(User user) throws DaoException {
         if (findUserByLogin(user.getLogin()) != null) {
-            user.setId(User.ID_NOT_DEFINED);
+            user.setId(null);
             logger.info("Attempt to add existing user " + user.getLogin());
             return;
         }

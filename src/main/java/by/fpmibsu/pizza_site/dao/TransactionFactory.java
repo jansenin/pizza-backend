@@ -1,6 +1,5 @@
 package by.fpmibsu.pizza_site.dao;
 
-import by.fpmibsu.pizza_site.database.ConnectionCreator;
 import by.fpmibsu.pizza_site.exception.TransactionException;
 
 import java.sql.Connection;

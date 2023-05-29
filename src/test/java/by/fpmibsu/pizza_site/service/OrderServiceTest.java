@@ -73,17 +73,17 @@ class OrderServiceTest {
 
         order = new Order(29, List.of(), OrderStatus.COMPLETED, 3);
         service.update(order);
-        assertEquals(Order.ID_NOT_DEFINED, order.getId());
+        assertNull(order.getId());
     }
 
     @Test
     void insertDelete() throws TransactionException, DaoException {
         OrderServiceInterface service = serviceFactory.getService(OrderServiceInterface.class);
-        Order insertOrder = new Order(Order.ID_NOT_DEFINED, List.of(new Pizza(69, "охотничья", List.of(
+        Order insertOrder = new Order(null, List.of(new Pizza(69, "охотничья", List.of(
                 new Ingredient(91, "томатный соус"), new Ingredient(95, "шампиньоны"),
                 new Ingredient(96, "охотничьи колбаски")), 800)), OrderStatus.IN_PROCESS, 2);
         service.insert(insertOrder);
-        assertNotEquals(Order.ID_NOT_DEFINED, insertOrder.getId());
+        assertNotEquals(null, insertOrder.getId());
         assertEquals(service.findById(insertOrder.getId()), insertOrder);
         service.deleteById(insertOrder.getId());
         assertNull(service.findById(insertOrder.getId()));

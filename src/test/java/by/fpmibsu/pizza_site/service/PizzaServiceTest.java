@@ -76,17 +76,17 @@ class PizzaServiceTest {
     @Test
     void insertDelete() throws TransactionException, DaoException {
         PizzaServiceInterface service = serviceFactory.getService(PizzaServiceInterface.class);
-        Pizza insertPizza = new Pizza(Pizza.ID_NOT_DEFINED, "деревенская", List.of(new Ingredient(86, "курица"),
+        Pizza insertPizza = new Pizza(null, "деревенская", List.of(new Ingredient(86, "курица"),
                 new Ingredient(85, "сыр")), 700);
         service.insert(insertPizza);
-        assertNotEquals(Pizza.ID_NOT_DEFINED, insertPizza.getId());
+        assertNotEquals(null, insertPizza.getId());
         assertEquals(service.findById(insertPizza.getId()), insertPizza);
         service.deleteById(insertPizza.getId());
         assertNull(service.findById(insertPizza.getId()));
 
-        insertPizza = new Pizza(Pizza.ID_NOT_DEFINED, "гавайская", List.of(new Ingredient(86, "курица"),
+        insertPizza = new Pizza(null, "гавайская", List.of(new Ingredient(86, "курица"),
                 new Ingredient(92, "соус песто")), 1200);
         service.insert(insertPizza);
-        assertEquals(Pizza.ID_NOT_DEFINED, insertPizza.getId());
+        assertNull(insertPizza.getId());
     }
 }

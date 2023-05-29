@@ -50,11 +50,11 @@ public class PizzaDao extends BaseDao implements PizzaDaoInterface {
     }
 
     @Override
-    public List<Pizza> findAllInOrder(int order_id) throws  DaoException {
+    public List<Pizza> findAllInOrder(Integer orderId) throws  DaoException {
         List<Pizza> pizzas = new ArrayList<>();
         ResultSet resultSet = null;
         try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL_PIZZAS_IN_ORDER)) {
-            statement.setInt(1, order_id);
+            statement.setInt(1, orderId);
             resultSet = statement.executeQuery();
             IngredientDao ingredientDao = new IngredientDao(connection);
             while (resultSet.next()) {
@@ -77,7 +77,7 @@ public class PizzaDao extends BaseDao implements PizzaDaoInterface {
     }
 
     @Override
-    public Pizza findById(int id) throws DaoException {
+    public Pizza findById(Integer id) throws DaoException {
         Pizza pizza = null;
         ResultSet resultSet = null;
         try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_PIZZA_BY_ID)) {
@@ -136,12 +136,12 @@ public class PizzaDao extends BaseDao implements PizzaDaoInterface {
         Pizza nameCheckPizza = findPizzaByName(pizza.getName());
         if (idCheckPizza == null) {
             logger.info("attempt to update pizza with no existing id");
-            pizza.setId(Ingredient.ID_NOT_DEFINED);
+            pizza.setId(null);
             return pizza;
         }
-        if (nameCheckPizza != null && nameCheckPizza.getId() != pizza.getId()) {
+        if (nameCheckPizza != null && !nameCheckPizza.getId().equals(pizza.getId())) {
             logger.info("attempt to set pizza already existing name");
-            pizza.setId(Ingredient.ID_NOT_DEFINED);
+            pizza.setId(null);
             return pizza;
         }
         try (PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_PIZZA)) {
@@ -186,7 +186,7 @@ public class PizzaDao extends BaseDao implements PizzaDaoInterface {
     }
 
     @Override
-    public void deleteById(int id) throws DaoException {
+    public void deleteById(Integer id) throws DaoException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE_PIZZA_BY_ID)) {
             statement.setInt(1, id);
             statement.executeUpdate();
@@ -209,7 +209,7 @@ public class PizzaDao extends BaseDao implements PizzaDaoInterface {
     public void insert(Pizza pizza) throws DaoException {
         if (findPizzaByName(pizza.getName()) != null) {
             logger.info("Attempt to add existing pizza " + pizza.getName());
-            pizza.setId(Pizza.ID_NOT_DEFINED);
+            pizza.setId(null);
             return;
         }
         PreparedStatement statement = null;

@@ -69,7 +69,7 @@ public class OrderDao extends BaseDao implements OrderDaoInterface {
     }
 
     @Override
-    public Order findById(int id) throws DaoException {
+    public Order findById(Integer id) throws DaoException {
         ResultSet resultSet = null;
         Order order = null;
         try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ORDER_BY_ID)) {
@@ -99,7 +99,7 @@ public class OrderDao extends BaseDao implements OrderDaoInterface {
     public Order update(Order order) throws DaoException {
         Order checkOrder = findById(order.getId());
         if (checkOrder == null) {
-            order.setId(Order.ID_NOT_DEFINED);
+            order.setId(null);
             logger.info("attempt to update order with no existing id");
             return order;
         }
@@ -114,7 +114,7 @@ public class OrderDao extends BaseDao implements OrderDaoInterface {
         return order;
     }
     @Override
-    public void deleteById(int id) throws DaoException {
+    public void deleteById(Integer id) throws DaoException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE_ORDER_BY_ID)) {
             statement.setInt(1, id);
             statement.executeUpdate();

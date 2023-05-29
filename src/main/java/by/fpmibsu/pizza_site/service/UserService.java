@@ -20,7 +20,7 @@ public class UserService extends Service implements UserServiceInterface {
     }
 
     @Override
-    public User findById(int id) throws DaoException, TransactionException {
+    public User findById(Integer id) throws DaoException, TransactionException {
         UserDaoInterface dao = transaction.createDao(UserDaoInterface.class);
         return dao.findById(id);
     }
@@ -32,7 +32,7 @@ public class UserService extends Service implements UserServiceInterface {
     }
 
     @Override
-    public void deleteById(int id) throws DaoException, TransactionException {
+    public void deleteById(Integer id) throws DaoException, TransactionException {
         UserDaoInterface dao = transaction.createDao(UserDaoInterface.class);
         dao.deleteById(id);
     }

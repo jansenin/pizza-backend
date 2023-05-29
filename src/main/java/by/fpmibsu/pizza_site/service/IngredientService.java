@@ -20,7 +20,7 @@ public class IngredientService extends Service implements IngredientServiceInter
     }
 
     @Override
-    public Ingredient findById(int id) throws DaoException, TransactionException {
+    public Ingredient findById(Integer id) throws DaoException, TransactionException {
         IngredientDaoInterface dao = transaction.createDao(IngredientDaoInterface.class);
         return dao.findById(id);
     }
@@ -32,7 +32,7 @@ public class IngredientService extends Service implements IngredientServiceInter
     }
 
     @Override
-    public void deleteById(int id) throws DaoException, TransactionException {
+    public void deleteById(Integer id) throws DaoException, TransactionException {
         IngredientDaoInterface dao = transaction.createDao(IngredientDaoInterface.class);
         dao.deleteById(id);
     }

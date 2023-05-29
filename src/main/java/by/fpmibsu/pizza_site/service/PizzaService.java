@@ -21,7 +21,7 @@ public class PizzaService extends Service implements PizzaServiceInterface {
     }
 
     @Override
-    public Pizza findById(int id) throws DaoException, TransactionException {
+    public Pizza findById(Integer id) throws DaoException, TransactionException {
         PizzaDaoInterface dao = transaction.createDao(PizzaDaoInterface.class);
         return dao.findById(id);
     }
@@ -33,7 +33,7 @@ public class PizzaService extends Service implements PizzaServiceInterface {
     }
 
     @Override
-    public void deleteById(int id) throws DaoException, TransactionException {
+    public void deleteById(Integer id) throws DaoException, TransactionException {
         PizzaDaoInterface dao = transaction.createDao(PizzaDaoInterface.class);
         dao.deleteById(id);
     }

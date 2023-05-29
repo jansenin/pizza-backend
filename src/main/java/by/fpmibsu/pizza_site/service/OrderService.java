@@ -21,7 +21,7 @@ public class OrderService extends Service implements OrderServiceInterface {
     }
 
     @Override
-    public Order findById(int id) throws DaoException, TransactionException {
+    public Order findById(Integer id) throws DaoException, TransactionException {
         OrderDaoInterface dao = transaction.createDao(OrderDaoInterface.class);
         return dao.findById(id);
     }
@@ -33,7 +33,7 @@ public class OrderService extends Service implements OrderServiceInterface {
     }
 
     @Override
-    public void deleteById(int id) throws DaoException, TransactionException {
+    public void deleteById(Integer id) throws DaoException, TransactionException {
         OrderDaoInterface dao = transaction.createDao(OrderDaoInterface.class);
         dao.deleteById(id);
     }

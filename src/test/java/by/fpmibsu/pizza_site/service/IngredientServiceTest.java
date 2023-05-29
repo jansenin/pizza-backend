@@ -67,37 +67,37 @@ class IngredientServiceTest {
 
         ingredient = new Ingredient(17, "несуществующий");
         service.update(ingredient);
-        assertEquals(Ingredient.ID_NOT_DEFINED, ingredient.getId());
+        assertNull(ingredient.getId());
 
         ingredient = new Ingredient(91, "ананас");
         service.update(ingredient);
-        assertEquals(Ingredient.ID_NOT_DEFINED, ingredient.getId());
+        assertNull(ingredient.getId());
     }
 
     @org.junit.jupiter.api.Test
     void insertDelete() throws TransactionException, DaoException {
         IngredientServiceInterface service = serviceFactory.getService(IngredientServiceInterface.class);
-        Ingredient insertIngredient = new Ingredient(Ingredient.ID_NOT_DEFINED, "кокос");
+        Ingredient insertIngredient = new Ingredient(null, "кокос");
         service.insert(insertIngredient);
-        assertNotEquals(Ingredient.ID_NOT_DEFINED, insertIngredient.getId());
+        assertNotEquals(null, insertIngredient.getId());
         assertEquals(service.findById(insertIngredient.getId()), insertIngredient);
         service.deleteById(insertIngredient.getId());
         assertNull(service.findById(insertIngredient.getId()));
 
-        insertIngredient = new Ingredient(Ingredient.ID_NOT_DEFINED, "трюфель");
+        insertIngredient = new Ingredient(null, "трюфель");
         service.insert(insertIngredient);
-        assertNotEquals(Ingredient.ID_NOT_DEFINED, insertIngredient.getId());
+        assertNotEquals(null, insertIngredient.getId());
         assertEquals(service.findById(insertIngredient.getId()), insertIngredient);
         service.deleteById(insertIngredient.getId());
         assertNull(service.findById(insertIngredient.getId()));
 
 
-        insertIngredient = new Ingredient(Ingredient.ID_NOT_DEFINED, "ананас");
+        insertIngredient = new Ingredient(null, "ананас");
         service.insert(insertIngredient);
-        assertEquals(Ingredient.ID_NOT_DEFINED, insertIngredient.getId());
+        assertNull(insertIngredient.getId());
 
-        insertIngredient = new Ingredient(Ingredient.ID_NOT_DEFINED, "сыр");
+        insertIngredient = new Ingredient(null, "сыр");
         service.insert(insertIngredient);
-        assertEquals(Ingredient.ID_NOT_DEFINED, insertIngredient.getId());
+        assertNull(insertIngredient.getId());
     }
 }

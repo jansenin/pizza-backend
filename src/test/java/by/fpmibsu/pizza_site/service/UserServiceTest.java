@@ -82,36 +82,36 @@ class UserServiceTest {
 
         user = new User(UserRole.CLIENT, "no such user", 4, "abacaba");
         service.update(user);
-        assertEquals(User.ID_NOT_DEFINED, user.getId());
+        assertNull(user.getId());
 
         user = new User(UserRole.CLIENT, "parfen", 7, "abacaba");
         service.update(user);
-        assertEquals(User.ID_NOT_DEFINED, user.getId());
+        assertNull(user.getId());
     }
 
     @Test
     void insertDelete() throws TransactionException, DaoException {
         UserServiceInterface service = serviceFactory.getService(UserServiceInterface.class);
-        User insertUser = new User(UserRole.STAFF, "new_worker", User.ID_NOT_DEFINED, "qwerty");
+        User insertUser = new User(UserRole.STAFF, "new_worker", null, "qwerty");
         service.insert(insertUser);
-        assertNotEquals(User.ID_NOT_DEFINED, insertUser.getId());
+        assertNotEquals(null, insertUser.getId());
         assertEquals(service.findById(insertUser.getId()), insertUser);
         service.deleteById(insertUser.getId());
         assertNull(service.findById(insertUser.getId()));
 
-        insertUser = new User(UserRole.ADMIN, "new_admin", User.ID_NOT_DEFINED, "admin");
+        insertUser = new User(UserRole.ADMIN, "new_admin", null, "admin");
         service.insert(insertUser);
-        assertNotEquals(User.ID_NOT_DEFINED, insertUser.getId());
+        assertNotEquals(null, insertUser.getId());
         assertEquals(service.findById(insertUser.getId()), insertUser);
         service.deleteById(insertUser.getId());
         assertNull(service.findById(insertUser.getId()));
 
-        insertUser = new User(UserRole.ADMIN, "fpm_student", User.ID_NOT_DEFINED, "");
+        insertUser = new User(UserRole.ADMIN, "fpm_student", null, "");
         service.insert(insertUser);
-        assertEquals(User.ID_NOT_DEFINED, insertUser.getId());
+        assertNull(insertUser.getId());
 
-        insertUser = new User(UserRole.ADMIN, "dzen", User.ID_NOT_DEFINED, "sdf");
+        insertUser = new User(UserRole.ADMIN, "dzen", null, "sdf");
         service.insert(insertUser);
-        assertEquals(User.ID_NOT_DEFINED, insertUser.getId());
+        assertNull(insertUser.getId());
     }
 }
