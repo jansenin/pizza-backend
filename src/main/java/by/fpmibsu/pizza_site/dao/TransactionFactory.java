@@ -17,8 +17,8 @@ public class TransactionFactory implements TransactionFactoryInterface {
     }
 
     @Override
-    public Transaction createTransaction() {
-        return new Transaction(connection);
+    public TransactionImpl createTransaction() {
+        return new TransactionImpl(connection);
     }
 
     @Override

@@ -12,11 +12,11 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class PizzaServiceTest {
-    static private final ServiceFactory serviceFactory;
+    static private final ServiceFactoryImpl serviceFactory;
 
     static {
         try {
-            serviceFactory = new ServiceFactory(new TransactionFactory());
+            serviceFactory = new ServiceFactoryImpl(new TransactionFactory());
         } catch (TransactionException e) {
             throw new RuntimeException(e);
         }
@@ -29,7 +29,7 @@ class PizzaServiceTest {
 
     @Test
     void findAll() throws TransactionException, DaoException {
-        PizzaServiceInterface service = serviceFactory.getService(PizzaServiceInterface.class);
+        PizzaService service = serviceFactory.getService(PizzaService.class);
         List<Pizza> pizzas = service.findAll();
         assertEquals(5, pizzas.size());
         assertTrue(pizzas.contains(new Pizza(70, "салями ранч", List.of(new Ingredient(88, "лук"),
@@ -39,7 +39,7 @@ class PizzaServiceTest {
 
     @Test
     void findById() throws TransactionException, DaoException {
-        PizzaServiceInterface service = serviceFactory.getService(PizzaServiceInterface.class);
+        PizzaService service = serviceFactory.getService(PizzaService.class);
         Pizza pizza = service.findById(68);
         assertEquals(new Pizza(68, "гавайская", List.of(new Ingredient(89, "ананас"),
                 new Ingredient(86, "курица"),
@@ -50,7 +50,7 @@ class PizzaServiceTest {
 
     @Test
     void updatePizzaAddRemoveIngredient() throws TransactionException, DaoException {
-        PizzaServiceInterface service = serviceFactory.getService(PizzaServiceInterface.class);
+        PizzaService service = serviceFactory.getService(PizzaService.class);
         Pizza pizza = service.findById(68);
         pizza.setName("карибская");
         pizza.setPrice(800);
@@ -75,7 +75,7 @@ class PizzaServiceTest {
 
     @Test
     void insertDelete() throws TransactionException, DaoException {
-        PizzaServiceInterface service = serviceFactory.getService(PizzaServiceInterface.class);
+        PizzaService service = serviceFactory.getService(PizzaService.class);
         Pizza insertPizza = new Pizza(null, "деревенская", List.of(new Ingredient(86, "курица"),
                 new Ingredient(85, "сыр")), 700);
         service.insert(insertPizza);

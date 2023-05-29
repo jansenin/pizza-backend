@@ -5,7 +5,7 @@ import by.fpmibsu.pizza_site.exception.DaoException;
 
 import java.util.List;
 
-public interface DaoInterface <Type extends Entity> {
+public interface Dao<Type extends Entity> {
      List<Type> findAll() throws DaoException;
      Type findById(Integer id) throws DaoException;
      Type update(Type entity) throws DaoException;

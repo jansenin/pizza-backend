@@ -12,7 +12,7 @@ import java.util.List;
 public class Runner {
     public static void main(String[] args) throws SQLException, DaoException {
         Connection userConnection = ConnectionCreator.createConnection();
-        UserDao userDao = new UserDao(userConnection);
+        UserDaoImpl userDao = new UserDaoImpl(userConnection);
         System.out.println("вывод всех пользователей:");
         List<User> users = userDao.findAll();
         for (var i : users) {
@@ -58,7 +58,7 @@ public class Runner {
         // users tested
         System.out.println("\nвывод ингредиента с первым id:");
         Connection ingredientConnection = ConnectionCreator.createConnection();
-        IngredientDao ingredientDao = new IngredientDao(ingredientConnection);
+        IngredientDaoImpl ingredientDao = new IngredientDaoImpl(ingredientConnection);
         Ingredient ingredient = ingredientDao.findById(1);
         System.out.println(ingredient == null ? "no such ingredient" : ingredient.toString());
         System.out.println("\nвывод всех ингредиентов:");
@@ -95,7 +95,7 @@ public class Runner {
         // ingredients tested
         System.out.println("\nвывод всех пицц:");
         Connection pizzaConnection = ConnectionCreator.createConnection();
-        PizzaDao pizzaDao = new PizzaDao(pizzaConnection);
+        PizzaDaoImpl pizzaDao = new PizzaDaoImpl(pizzaConnection);
         List<Pizza> pizzas = pizzaDao.findAll();
         for (var i : pizzas) {
             System.out.println(i.toString());
@@ -110,7 +110,7 @@ public class Runner {
             System.out.println(i.toString());
         }
         Connection orderConnection = ConnectionCreator.createConnection();
-        OrderDao orderDao = new OrderDao(orderConnection);
+        OrderDaoImpl orderDao = new OrderDaoImpl(orderConnection);
         System.out.println("\nвывод всех заказов:");
         List<Order> orders = orderDao.findAll();
         for (var i : orders) {

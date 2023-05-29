@@ -10,10 +10,10 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class IngredientServiceTest {
-    static private final ServiceFactory serviceFactory;
+    static private final ServiceFactoryImpl serviceFactory;
     static {
         try {
-            serviceFactory = new ServiceFactory(new TransactionFactory());
+            serviceFactory = new ServiceFactoryImpl(new TransactionFactory());
         } catch (TransactionException e) {
             throw new RuntimeException(e);
         }
@@ -26,7 +26,7 @@ class IngredientServiceTest {
 
     @org.junit.jupiter.api.Test
     void findAll() throws TransactionException, DaoException {
-        IngredientServiceInterface service = serviceFactory.getService(IngredientServiceInterface.class);
+        IngredientService service = serviceFactory.getService(IngredientService.class);
         List<Ingredient> ingredients = service.findAll();
         assertEquals(14, ingredients.size());
         assertTrue(ingredients.contains(new Ingredient(89, "ананас")));
@@ -35,7 +35,7 @@ class IngredientServiceTest {
 
     @org.junit.jupiter.api.Test
     void findById() throws TransactionException, DaoException {
-        IngredientServiceInterface service = serviceFactory.getService(IngredientServiceInterface.class);
+        IngredientService service = serviceFactory.getService(IngredientService.class);
         Ingredient ingredient = service.findById(89);
         assertEquals(new Ingredient(89, "ананас"), ingredient);
         ingredient = service.findById(90);
@@ -52,7 +52,7 @@ class IngredientServiceTest {
 
     @org.junit.jupiter.api.Test
     void update() throws TransactionException, DaoException {
-        IngredientServiceInterface service = serviceFactory.getService(IngredientServiceInterface.class);
+        IngredientService service = serviceFactory.getService(IngredientService.class);
         Ingredient ingredient = service.findById(86);
         ingredient.setName("копчёная курица");
         service.update(ingredient);
@@ -76,7 +76,7 @@ class IngredientServiceTest {
 
     @org.junit.jupiter.api.Test
     void insertDelete() throws TransactionException, DaoException {
-        IngredientServiceInterface service = serviceFactory.getService(IngredientServiceInterface.class);
+        IngredientService service = serviceFactory.getService(IngredientService.class);
         Ingredient insertIngredient = new Ingredient(null, "кокос");
         service.insert(insertIngredient);
         assertNotEquals(null, insertIngredient.getId());

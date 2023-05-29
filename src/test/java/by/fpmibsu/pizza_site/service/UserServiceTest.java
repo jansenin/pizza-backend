@@ -12,10 +12,10 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class UserServiceTest {
-    static private final ServiceFactory serviceFactory;
+    static private final ServiceFactoryImpl serviceFactory;
     static {
         try {
-            serviceFactory = new ServiceFactory(new TransactionFactory());
+            serviceFactory = new ServiceFactoryImpl(new TransactionFactory());
         } catch (TransactionException e) {
             throw new RuntimeException(e);
         }
@@ -28,7 +28,7 @@ class UserServiceTest {
 
     @Test
     void findAll() throws TransactionException, DaoException {
-        UserServiceInterface service = serviceFactory.getService(UserServiceInterface.class);
+        UserService service = serviceFactory.getService(UserService.class);
         List<User> users = service.findAll();
         assertEquals(3, users.size());
         assertEquals(List.of(new User(UserRole.ADMIN, "dzen", 1, "secret"),
@@ -38,7 +38,7 @@ class UserServiceTest {
 
     @Test
     void findUserByLogin() throws TransactionException, DaoException {
-        UserServiceInterface service = serviceFactory.getService(UserServiceInterface.class);
+        UserService service = serviceFactory.getService(UserService.class);
         User user = service.findUserByLogin("dzen");
         assertEquals(new User(UserRole.ADMIN, "dzen", 1, "secret"), user);
         user = service.findUserByLogin("fpm_student");
@@ -50,7 +50,7 @@ class UserServiceTest {
     }
     @Test
     void findById() throws TransactionException, DaoException {
-        UserServiceInterface service = serviceFactory.getService(UserServiceInterface.class);
+        UserService service = serviceFactory.getService(UserService.class);
         User user = service.findById(1);
         assertEquals(new User(UserRole.ADMIN, "dzen", 1, "secret"), user);
         user = service.findById(72);
@@ -63,7 +63,7 @@ class UserServiceTest {
 
     @Test
     void update() throws TransactionException, DaoException {
-        UserServiceInterface service = serviceFactory.getService(UserServiceInterface.class);
+        UserService service = serviceFactory.getService(UserService.class);
         User user = service.findById(72);
         user.setPassword("fpm the best");
         user.setRole(UserRole.STAFF);
@@ -91,7 +91,7 @@ class UserServiceTest {
 
     @Test
     void insertDelete() throws TransactionException, DaoException {
-        UserServiceInterface service = serviceFactory.getService(UserServiceInterface.class);
+        UserService service = serviceFactory.getService(UserService.class);
         User insertUser = new User(UserRole.STAFF, "new_worker", null, "qwerty");
         service.insert(insertUser);
         assertNotEquals(null, insertUser.getId());
