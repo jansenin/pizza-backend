@@ -5,7 +5,7 @@ import by.fpmibsu.pizza_site.entity.Ingredient;
 import by.fpmibsu.pizza_site.entity.Pizza;
 import by.fpmibsu.pizza_site.exception.DaoException;
 import by.fpmibsu.pizza_site.exception.TransactionException;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +23,7 @@ class PizzaServiceTest {
         }
     }
 
-    @org.junit.jupiter.api.AfterAll
+    @AfterAll
     static void closeFactory() throws TransactionException {
         serviceFactory.close();
     }

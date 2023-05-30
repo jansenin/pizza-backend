@@ -5,7 +5,7 @@ import by.fpmibsu.pizza_site.entity.User;
 import by.fpmibsu.pizza_site.entity.UserRole;
 import by.fpmibsu.pizza_site.exception.DaoException;
 import by.fpmibsu.pizza_site.exception.TransactionException;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -26,7 +26,7 @@ class UserServiceTest {
         }
     }
 
-    @org.junit.jupiter.api.AfterAll
+    @AfterAll
     static void closeFactory() throws TransactionException {
         serviceFactory.close();
     }
