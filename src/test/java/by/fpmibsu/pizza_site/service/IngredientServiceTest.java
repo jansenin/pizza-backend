@@ -4,6 +4,10 @@ import by.fpmibsu.pizza_site.dao.TransactionFactory;
 import by.fpmibsu.pizza_site.entity.Ingredient;
 import by.fpmibsu.pizza_site.exception.DaoException;
 import by.fpmibsu.pizza_site.exception.TransactionException;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.params.*;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.List;
 
@@ -19,99 +23,102 @@ class IngredientServiceTest {
         }
     }
 
-    @org.junit.jupiter.api.AfterAll
+    @AfterAll
     static void closeFactory() throws TransactionException {
         serviceFactory.close();
     }
 
-    @org.junit.jupiter.api.Test
-    void findAll() throws TransactionException, DaoException {
+    @Test
+    void findAllSizeTest() throws TransactionException, DaoException {
         IngredientService service = serviceFactory.getService(IngredientService.class);
         List<Ingredient> ingredients = service.findAll();
         assertEquals(14, ingredients.size());
-        Ingredient checkIngredient = new Ingredient("ананас");
-        checkIngredient.setId(89);
-        assertTrue(ingredients.contains(checkIngredient));
-        checkIngredient.setName("курица");
-        checkIngredient.setId(86);
-        assertTrue(ingredients.contains(checkIngredient));
     }
 
-    @org.junit.jupiter.api.Test
-    void findById() throws TransactionException, DaoException {
+    @ParameterizedTest
+    @CsvSource(value = {"89, ананас",
+                        "86, курица"})
+    void findAllContainsTest(Integer id, String name) throws TransactionException, DaoException {
         IngredientService service = serviceFactory.getService(IngredientService.class);
-        Ingredient ingredient = service.findById(89);
-        Ingredient checkIngredient = new Ingredient("ананас");
-        checkIngredient.setId(89);
+        List<Ingredient> ingredients = service.findAll();
+        Ingredient ingredient = new Ingredient(name);
+        ingredient.setId(id);
+        assertTrue(ingredients.contains(ingredient));
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {"89, ананас",
+                        "90, сладкий перец",
+                        "91, томатный соус",
+                        "92, соус песто"})
+    void findByIdNotNullTest(Integer id, String name) throws TransactionException, DaoException {
+        IngredientService service = serviceFactory.getService(IngredientService.class);
+        Ingredient ingredient = service.findById(id);
+        Ingredient checkIngredient = new Ingredient(name);
+        checkIngredient.setId(id);
         assertEquals(checkIngredient, ingredient);
-        ingredient = service.findById(90);
-        checkIngredient.setName("сладкий перец");
-        checkIngredient.setId(90);
-        assertEquals(checkIngredient, ingredient);
-        ingredient = service.findById(91);
-        checkIngredient.setName("томатный соус");
-        checkIngredient.setId(91);
-        assertEquals(checkIngredient, ingredient);
-        ingredient = service.findById(92);
-        checkIngredient.setName("соус песто");
-        checkIngredient.setId(92);
-        assertEquals(checkIngredient, ingredient);
-        ingredient = service.findById(14);
-        assertNull(ingredient);
-        ingredient = service.findById(23);
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {27, 35, 62, 12})
+    void findByIdNullTest(Integer id) throws TransactionException, DaoException {
+        IngredientService service = serviceFactory.getService(IngredientService.class);
+        Ingredient ingredient = service.findById(id);
         assertNull(ingredient);
     }
 
-    @org.junit.jupiter.api.Test
-    void update() throws TransactionException, DaoException {
+    @ParameterizedTest
+    @CsvSource(value = {"89, ананас, большой ананас",
+                        "90, сладкий перец, кислый перец",
+                        "91, томатный соус, помидорный соус",
+                        "92, соус песто, соус пистолет"})
+    void allowedUpdateTest(Integer id, String oldName, String newName) throws TransactionException, DaoException {
         IngredientService service = serviceFactory.getService(IngredientService.class);
-        Ingredient ingredient = service.findById(86);
-        ingredient.setName("копчёная курица");
+        Ingredient ingredient = service.findById(id);
+        ingredient.setName(newName);
         service.update(ingredient);
-        assertEquals(86, ingredient.getId());
-        assertEquals("копчёная курица", ingredient.getName());
-        assertEquals(service.findById(86), ingredient);
-        ingredient.setName("курица");
+        assertEquals(id, ingredient.getId());
+        assertEquals(newName, ingredient.getName());
+        assertEquals(service.findById(id), ingredient);
+        ingredient.setName(oldName);
         service.update(ingredient);
-        assertEquals(86, ingredient.getId());
-        assertEquals("курица", ingredient.getName());
-        assertEquals(service.findById(86), ingredient);
+        assertEquals(id, ingredient.getId());
+        assertEquals(oldName, ingredient.getName());
+        assertEquals(service.findById(id), ingredient);
+    }
 
-        ingredient = new Ingredient("несуществующий");
-        ingredient.setId(17);
+    @ParameterizedTest
+    @CsvSource(value = {"30, новое имя",
+            "31, новое имя",
+            "91, соус песто",
+            "92, томатный соус"})
+    void notAllowedUpdateTest(Integer id, String name) throws TransactionException, DaoException {
+        IngredientService service = serviceFactory.getService(IngredientService.class);
+        Ingredient ingredient = new Ingredient(name);
+        ingredient.setId(id);
         service.update(ingredient);
         assertNull(ingredient.getId());
-
-        ingredient = new Ingredient("ананас");
-        ingredient.setId(91);
-        service.update(ingredient);
-        assertNull(ingredient.getId());
     }
 
-    @org.junit.jupiter.api.Test
-    void insertDelete() throws TransactionException, DaoException {
+    @ParameterizedTest
+    @ValueSource(strings = {"кокос", "трюфель"})
+    void allowedInsertDeleteTest(String name) throws TransactionException, DaoException {
         IngredientService service = serviceFactory.getService(IngredientService.class);
-        Ingredient insertIngredient = new Ingredient("кокос");
+        Ingredient insertIngredient = new Ingredient(name);
         service.insert(insertIngredient);
-        assertNotEquals(null, insertIngredient.getId());
+        assertNotNull(insertIngredient.getId());
         assertEquals(service.findById(insertIngredient.getId()), insertIngredient);
         service.deleteById(insertIngredient.getId());
         assertNull(service.findById(insertIngredient.getId()));
+    }
 
-        insertIngredient = new Ingredient("трюфель");
-        service.insert(insertIngredient);
-        assertNotEquals(null, insertIngredient.getId());
-        assertEquals(service.findById(insertIngredient.getId()), insertIngredient);
-        service.deleteById(insertIngredient.getId());
-        assertNull(service.findById(insertIngredient.getId()));
-
-
-        insertIngredient = new Ingredient("ананас");
-        service.insert(insertIngredient);
-        assertNull(insertIngredient.getId());
-
-        insertIngredient = new Ingredient("сыр");
+    @ParameterizedTest
+    @ValueSource(strings = {"ананас", "сыр"})
+    void notAllowedInsertTest(String name) throws TransactionException, DaoException {
+        IngredientService service = serviceFactory.getService(IngredientService.class);
+        Ingredient insertIngredient = new Ingredient(name);
         service.insert(insertIngredient);
         assertNull(insertIngredient.getId());
     }
+
 }
