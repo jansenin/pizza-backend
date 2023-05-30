@@ -2,21 +2,22 @@ package by.fpmibsu.pizza_site.entity;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 
 public class Order extends Entity {
-    private int userId;
+    private Integer userId;
     private OrderStatus orderStatus;
     private List<Pizza> pizzas;
-    static public final int ID_NOT_DEFINED = -1;
-  
-    public Order(int id, List<Pizza> pizzas, OrderStatus orderStatus, int userId) {
-        this.id = id;
+
+    public Order() {}
+
+    public Order(List<Pizza> pizzas, OrderStatus orderStatus, Integer userId) {
         this.userId = userId;
         this.pizzas = pizzas;
         this.orderStatus = orderStatus;
     }
 
-    public int getUserId() {
+    public Integer getUserId() {
         return userId;
     }
 
@@ -46,8 +47,8 @@ public class Order extends Entity {
             return false;
         }
         Order toCompare = (Order) object;
-        return id == toCompare.id
-                && userId == toCompare.userId
+        return id.equals(toCompare.id)
+                && userId.equals(toCompare.userId)
                 && orderStatus.equals(toCompare.orderStatus)
                 && new HashSet<>(pizzas).equals(new HashSet<>(toCompare.pizzas));
     }
@@ -55,5 +56,10 @@ public class Order extends Entity {
     @Override
     public String toString() {
         return "Order [ orderId = " + id + " userId = " + userId + " orderStatus = " + orderStatus.toString() + " pizzas = " + pizzas.toString() + " ]";
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), userId, orderStatus);
     }
 }

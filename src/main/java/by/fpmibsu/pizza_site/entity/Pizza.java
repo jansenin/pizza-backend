@@ -2,14 +2,15 @@ package by.fpmibsu.pizza_site.entity;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 
 public class Pizza extends Entity {
     private int price;
     private String name;
     private List<Ingredient> ingredients;
-    static public final int ID_NOT_DEFINED = -1;
-    public Pizza(int id, String name, List<Ingredient> ingredients, int price) {
-        this.id = id;
+
+    public Pizza() {}
+    public Pizza(String name, List<Ingredient> ingredients, int price) {
         this.name = name;
         this.ingredients = ingredients;
         this.price = price;
@@ -53,5 +54,10 @@ public class Pizza extends Entity {
     @Override
     public String toString() {
         return "Pizza [ id = " + id + " name = " + name + " price = " + price + " ingredients = " + ingredients.toString() + " ]";
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), price, name);
     }
 }

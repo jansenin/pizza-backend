@@ -1,13 +1,15 @@
 package by.fpmibsu.pizza_site.entity;
+
+import java.util.Objects;
+
 public class User extends Entity {
     private UserRole role;
     private String login;
     private String password;
-    static public final int ID_NOT_DEFINED = -1;
-    public User(UserRole role, String login, int id, String password) {
+    public User() {}
+    public User(UserRole role, String login, String password) {
         this.password = password;
         this.role = role;
-        this.id = id;
         this.login = login;
     }
 
@@ -48,5 +50,10 @@ public class User extends Entity {
     @Override
     public String toString() {
         return "User [ id = " + id + " login = " + login + " role = " + role.toString() + " password = " + password + " ]";
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), role, login, password);
     }
 }

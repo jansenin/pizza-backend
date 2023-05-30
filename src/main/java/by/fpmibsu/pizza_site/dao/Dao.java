@@ -5,10 +5,10 @@ import by.fpmibsu.pizza_site.exception.DaoException;
 
 import java.util.List;
 
-public interface DaoInterface <Type extends Entity> {
+public interface Dao<Type extends Entity> {
      List<Type> findAll() throws DaoException;
-     Type findById(int id) throws DaoException;
+     Type findById(Integer id) throws DaoException;
      Type update(Type entity) throws DaoException;
-     void deleteById(int id) throws DaoException;
+     void deleteById(Integer id) throws DaoException;
      void insert(Type entity) throws DaoException;
 }

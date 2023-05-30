@@ -1,6 +1,5 @@
 package by.fpmibsu.pizza_site.dao;
 
-import by.fpmibsu.pizza_site.database.ConnectionCreator;
 import by.fpmibsu.pizza_site.exception.TransactionException;
 
 import java.sql.Connection;
@@ -18,8 +17,8 @@ public class TransactionFactory implements TransactionFactoryInterface {
     }
 
     @Override
-    public Transaction createTransaction() {
-        return new Transaction(connection);
+    public TransactionImpl createTransaction() {
+        return new TransactionImpl(connection);
     }
 
     @Override
