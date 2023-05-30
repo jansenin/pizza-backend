@@ -4,7 +4,8 @@ import by.fpmibsu.pizza_site.entity.User;
 import by.fpmibsu.pizza_site.entity.UserRole;
 import by.fpmibsu.pizza_site.exception.DaoException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +19,7 @@ public class UserDaoImpl extends BaseDaoImpl implements UserDao {
     private static final String SQL_DELETE_USER_BY_LOGIN = "DELETE FROM users WHERE login = ?";
     private static final String SQL_INSERT_USER = "INSERT INTO users(role, password, login) VALUES (CAST(? AS userrole), ?, ?)";
 
-    private static final Logger logger = Logger.getLogger(IngredientDaoImpl.class);
+    private static final Logger logger = LogManager.getLogger(IngredientDaoImpl.class);
 
     public UserDaoImpl(Connection connection) {
         super(connection);
@@ -102,12 +103,12 @@ public class UserDaoImpl extends BaseDaoImpl implements UserDao {
         User idCheckUser = findById(user.getId());
         User loginCheckUser = findUserByLogin(user.getLogin());
         if (idCheckUser == null) {
-            logger.info("attempt to update user with no existing id");
+            logger.info("attempt to update user with no existing id " + user.getId());
             user.setId(null);
             return user;
         }
         if (loginCheckUser != null && !loginCheckUser.getId().equals(user.getId())) {
-            logger.info("attempt to set user already existing name");
+            logger.info("attempt to set user already existing login " + user.getLogin());
             user.setId(null);
             return user;
         }
@@ -165,7 +166,7 @@ public class UserDaoImpl extends BaseDaoImpl implements UserDao {
     public void insert(User user) throws DaoException {
         if (findUserByLogin(user.getLogin()) != null) {
             user.setId(null);
-            logger.info("Attempt to add existing user " + user.getLogin());
+            logger.info("attempt to add existing user " + user.getLogin());
             return;
         }
         try (PreparedStatement statement = connection.prepareStatement(SQL_INSERT_USER, Statement.RETURN_GENERATED_KEYS)){

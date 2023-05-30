@@ -5,7 +5,8 @@ import by.fpmibsu.pizza_site.entity.Ingredient;
 import by.fpmibsu.pizza_site.entity.Pizza;
 import by.fpmibsu.pizza_site.exception.DaoException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +27,7 @@ public class PizzaDaoImpl extends BaseDaoImpl implements PizzaDao {
     private static final String SQL_INSERT_PIZZA = "INSERT INTO pizzas(name, price) " +
             "VALUES(?, ?)";
 
-    private static final Logger logger = Logger.getLogger(IngredientDaoImpl.class);
+    private static final Logger logger = LogManager.getLogger(IngredientDaoImpl.class);
 
     public PizzaDaoImpl(Connection connection) {
         super(connection);
@@ -152,12 +153,12 @@ public class PizzaDaoImpl extends BaseDaoImpl implements PizzaDao {
         Pizza idCheckPizza = findById(pizza.getId());
         Pizza nameCheckPizza = findPizzaByName(pizza.getName());
         if (idCheckPizza == null) {
-            logger.info("attempt to update pizza with no existing id");
+            logger.info("attempt to update pizza with no existing id " + pizza.getId());
             pizza.setId(null);
             return pizza;
         }
         if (nameCheckPizza != null && !nameCheckPizza.getId().equals(pizza.getId())) {
-            logger.info("attempt to set pizza already existing name");
+            logger.info("attempt to set pizza already existing name " + pizza.getName());
             pizza.setId(null);
             return pizza;
         }
@@ -227,7 +228,7 @@ public class PizzaDaoImpl extends BaseDaoImpl implements PizzaDao {
     @Override
     public void insert(Pizza pizza) throws DaoException {
         if (findPizzaByName(pizza.getName()) != null) {
-            logger.info("Attempt to add existing pizza " + pizza.getName());
+            logger.info("attempt to add existing pizza " + pizza.getName());
             pizza.setId(null);
             return;
         }

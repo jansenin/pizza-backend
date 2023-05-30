@@ -3,7 +3,8 @@ package by.fpmibsu.pizza_site.dao;
 import by.fpmibsu.pizza_site.entity.Ingredient;
 
 import by.fpmibsu.pizza_site.exception.DaoException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -19,7 +20,7 @@ public class IngredientDaoImpl extends BaseDaoImpl implements IngredientDao {
     private static final String SQL_DELETE_INGREDIENT_BY_NAME = "DELETE FROM ingredients WHERE name = ?";
     private static final String SQL_INSERT_INGREDIENT = "INSERT INTO ingredients(name) VALUES (?)";
 
-    private static final Logger logger = Logger.getLogger(IngredientDaoImpl.class);
+    private static final Logger logger = LogManager.getLogger(IngredientDaoImpl.class);
 
     public IngredientDaoImpl(Connection connection) {
         super(connection);
@@ -98,12 +99,12 @@ public class IngredientDaoImpl extends BaseDaoImpl implements IngredientDao {
         Ingredient idCheckIngredient = findById(ingredient.getId());
         Ingredient nameCheckIngredient = findIngredientByName(ingredient.getName());
         if (idCheckIngredient == null) {
-            logger.info("attempt to update ingredient with no existing id");
+            logger.info("attempt to update ingredient with no existing id " + ingredient.getId());
             ingredient.setId(null);
             return ingredient;
         }
         if (nameCheckIngredient != null && !nameCheckIngredient.getId().equals(ingredient.getId())) {
-            logger.info("attempt to set ingredient already existing name");
+            logger.info("attempt to set ingredient already existing name " + ingredient.getName());
             ingredient.setId(null);
             return ingredient;
         }
@@ -146,7 +147,7 @@ public class IngredientDaoImpl extends BaseDaoImpl implements IngredientDao {
     public void insert(Ingredient ingredient) throws DaoException {
         if (findIngredientByName(ingredient.getName()) != null) {
             ingredient.setId(null);
-            logger.info("Attempt to add existing ingredient " + ingredient.getName());
+            logger.info("attempt to add existing ingredient " + ingredient.getName());
             return;
         }
         try (PreparedStatement statement = connection.prepareStatement(SQL_INSERT_INGREDIENT, Statement.RETURN_GENERATED_KEYS)) {

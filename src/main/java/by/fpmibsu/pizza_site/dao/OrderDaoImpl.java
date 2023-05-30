@@ -3,7 +3,8 @@ package by.fpmibsu.pizza_site.dao;
 import by.fpmibsu.pizza_site.entity.*;
 import by.fpmibsu.pizza_site.exception.DaoException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +20,7 @@ public class OrderDaoImpl extends BaseDaoImpl implements OrderDao {
     private static final String SQL_INSERT_PIZZA_IN_ORDER = "INSERT INTO order_pizzas(order_id, pizza_id) VALUES(?, ?)";
     private static final String SQL_INSERT_ORDER = "INSERT INTO orders(status, user_id) VALUES(CAST (? AS orderstatus), ?)";
 
-    private static final Logger logger = Logger.getLogger(IngredientDaoImpl.class);
+    private static final Logger logger = LogManager.getLogger(IngredientDaoImpl.class);
 
     public OrderDaoImpl(Connection connection) {
         super(connection);

@@ -1,7 +1,8 @@
 package by.fpmibsu.pizza_site.dao;
 
 import by.fpmibsu.pizza_site.exception.TransactionException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -18,7 +19,7 @@ public class TransactionImpl implements Transaction {
         classes.put(PizzaDao.class, PizzaDaoImpl.class);
         classes.put(OrderDao.class, OrderDaoImpl.class);
     }
-    private static final Logger logger = Logger.getLogger(IngredientDaoImpl.class);
+    private static final Logger logger = LogManager.getLogger(IngredientDaoImpl.class);
     private final Connection connection;
 
     public TransactionImpl(Connection connection) {

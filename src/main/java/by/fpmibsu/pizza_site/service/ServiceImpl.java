@@ -7,8 +7,4 @@ public abstract class ServiceImpl {
     public ServiceImpl(Transaction transaction) {
         this.transaction = transaction;
     }
-
-    public void setTransaction(Transaction transaction) {
-        this.transaction = transaction;
-    }
 }
