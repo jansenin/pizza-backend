@@ -17,6 +17,9 @@ public class PizzaServiceImpl extends ServiceImpl implements PizzaService {
 
 
     private void LoadData(Pizza pizza) throws TransactionException, DaoException {
+        if (pizza == null) {
+            return;
+        }
         IngredientDao ingredientDao = transaction.createDao(IngredientDao.class);
         for (Ingredient ingredient : pizza.getIngredients()) {
             ingredient.setName(ingredientDao.findById(ingredient.getId()).getName());

@@ -18,6 +18,9 @@ public class OrderServiceImpl extends ServiceImpl implements OrderService {
     }
 
     private void LoadData(Order order) throws TransactionException, DaoException {
+        if (order == null) {
+            return;
+        }
         PizzaDao pizzaDao = transaction.createDao(PizzaDao.class);
         IngredientDao ingredientDao = transaction.createDao(IngredientDao.class);
         for (int i = 0; i < order.getPizzas().size(); ++i) {
