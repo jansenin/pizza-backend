@@ -4,7 +4,7 @@ pizza-site - это клиент-серверное приложение для 
 делать заказ и отслеживать статус своего заказа, а персоналу видеть заказы клиентов, выполнять их и изменять
 их статус.
 Use-case-diagram
-<img src="https://drive.google.com/file/d/1EYQQC1PmxKRlsmgJqcHBvlx0t_eUWLwR/view?usp=drive_link">
+<img src="src/main/resources/use-case-diagram.png">
 
 #Технологии
 pizza-site - написано с использованием языков Java, React, TypeScript при помощи следующих библиотекех и фреймворков:
@@ -15,7 +15,7 @@ pizza-site - написано с использованием языков Java,
 
 #Структура и Запуск
 Диаграмма классов
-<img src="https://drive.google.com/file/d/1zOrPagrBhQ7jyaYQb_3O66jqn_b9ONid/view?usp=drive_link">
+<img src="src/main/resources/class-diagram.png">
 
 Для запуска приложения необходимо выполнить следующие шаги:
 1. Установить Apache Tomcat 9
