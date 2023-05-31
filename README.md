@@ -20,9 +20,6 @@ pizza-site - написано с использованием языков Java,
 Диаграмма классов
 <img src="src/main/resources/class-diagram.png">
 
-Диаграмма компонент
-<img src="src/main/resources/component_diagram.png">
-
 Диаграмма развёртования
 <img src="src/main/resources/unwrap_diagram.png">
 
