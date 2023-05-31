@@ -14,7 +14,7 @@
     </Appenders>
     <Loggers>
         <Root level="all">
-            <AppenderRef ref="console" level="info"/>
+            <AppenderRef ref="console" level="trace"/>
             <AppenderRef ref="STDOUT"/>
             <AppenderRef ref="file-rolling"/>
         </Root>

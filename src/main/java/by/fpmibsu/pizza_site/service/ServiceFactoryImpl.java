@@ -1,7 +1,7 @@
 package by.fpmibsu.pizza_site.service;
 
 import by.fpmibsu.pizza_site.dao.TransactionImpl;
-import by.fpmibsu.pizza_site.dao.TransactionFactory;
+import by.fpmibsu.pizza_site.dao.TransactionFactoryImpl;
 import by.fpmibsu.pizza_site.exception.TransactionException;
 
 import java.lang.reflect.Constructor;
@@ -20,9 +20,9 @@ public class ServiceFactoryImpl implements ServiceFactory {
         services.put(OrderService.class, OrderServiceImpl.class);
     }
 
-    private final TransactionFactory factory;
+    private final TransactionFactoryImpl factory;
 
-    public ServiceFactoryImpl(TransactionFactory factory) {
+    public ServiceFactoryImpl(TransactionFactoryImpl factory) {
         this.factory = factory;
     }
 
