@@ -1,6 +1,6 @@
 package by.fpmibsu.pizza_site.service;
 
-import by.fpmibsu.pizza_site.dao.TransactionFactory;
+import by.fpmibsu.pizza_site.dao.TransactionFactoryImpl;
 import by.fpmibsu.pizza_site.entity.User;
 import by.fpmibsu.pizza_site.entity.UserRole;
 import by.fpmibsu.pizza_site.exception.DaoException;
@@ -20,7 +20,7 @@ class UserServiceTest {
     static private final ServiceFactoryImpl serviceFactory;
     static {
         try {
-            serviceFactory = new ServiceFactoryImpl(new TransactionFactory());
+            serviceFactory = new ServiceFactoryImpl(new TransactionFactoryImpl());
         } catch (TransactionException e) {
             throw new RuntimeException(e);
         }

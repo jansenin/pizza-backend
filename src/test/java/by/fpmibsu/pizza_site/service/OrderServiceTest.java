@@ -1,6 +1,6 @@
 package by.fpmibsu.pizza_site.service;
 
-import by.fpmibsu.pizza_site.dao.TransactionFactory;
+import by.fpmibsu.pizza_site.dao.TransactionFactoryImpl;
 import by.fpmibsu.pizza_site.entity.Ingredient;
 import by.fpmibsu.pizza_site.entity.Order;
 import by.fpmibsu.pizza_site.entity.OrderStatus;
@@ -19,7 +19,7 @@ class OrderServiceTest {
 
     static {
         try {
-            serviceFactory = new ServiceFactoryImpl(new TransactionFactory());
+            serviceFactory = new ServiceFactoryImpl(new TransactionFactoryImpl());
         } catch (TransactionException e) {
             throw new RuntimeException(e);
         }

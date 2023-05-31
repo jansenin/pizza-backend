@@ -1,174 +1,47 @@
-import by.fpmibsu.pizza_site.dao.*;
-import by.fpmibsu.pizza_site.dao.ConnectionCreator;
 import by.fpmibsu.pizza_site.entity.*;
-import by.fpmibsu.pizza_site.exception.DaoException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 
 public class Runner {
-    public static void main(String[] args) throws SQLException, DaoException {
-//        Connection userConnection = ConnectionCreator.createConnection();
-//        UserDaoImpl userDao = new UserDaoImpl(userConnection);
-//        System.out.println("вывод всех пользователей:");
-//        List<User> users = userDao.findAll();
-//        for (var i : users) {
-//            System.out.println(i.toString());
-//        }
-//        System.out.println("\nвывод пользователя с первым id:");
-//        User user = userDao.findById(1);
-//        System.out.println(user.toString());
-//        System.out.println("\nвывод пользователя с логином parfen:");
-//        user = userDao.findUserByLogin("parfen");
-//        System.out.println(user.toString());
-//        System.out.println("\nвывод несуществующего пользователя:");
-//        user = userDao.findUserByLogin("ttt");
-//        System.out.println("пользователь не найден = " + (user == null));
-//        System.out.println("\nдобавление двух новых пользователей:");
-//        userDao.insert(new User(UserRole.CLIENT, "guy1", "abacaba"));
-//        userDao.insert(user = new User(UserRole.CLIENT, "guy2","dddd"));
-//        users = userDao.findAll();
-//        for (var i : users) {
-//            System.out.println(i.toString());
-//        }
-//        System.out.println("\nявляется ли  abacaba паролем для guy1 = " + userDao.checkUserPassword(userDao.findUserByLogin("guy1"), "abacaba"));
-//        System.out.println("является ли abacaba паролем для guy2 = " + userDao.checkUserPassword(userDao.findUserByLogin("guy2"), "abacaba"));
-//        System.out.println("\nредактируем guy2:");
-//        user.setLogin("BIGGUY");
-//        user.setRole(UserRole.STAFF);
-//        userDao.update(user);
-//        user.setPassword("aaa");
-//        System.out.println("является ли aaa паролем для BIGGUY до апдейта пароля = " + userDao.checkUserPassword(user, "aaa"));
-//        userDao.update(user);
-//        System.out.println("является ли aaa паролем для BIGGUY после апдейта пароля = " + userDao.checkUserPassword(user, "aaa"));
-//        users = userDao.findAll();
-//        for (var i : users) {
-//            System.out.println(i.toString());
-//        }
-//        System.out.println("\nудаление гаев:");
-//        userDao.deleteByLogin("guy1");
-//        userDao.deleteByLogin("BIGGUY");
-//        users = userDao.findAll();
-//        for (var i : users) {
-//            System.out.println(i.toString());
-//        }
-//        // users tested
-//        System.out.println("\nвывод ингредиента с первым id:");
-//        Connection ingredientConnection = ConnectionCreator.createConnection();
-//        IngredientDaoImpl ingredientDao = new IngredientDaoImpl(ingredientConnection);
-//        Ingredient ingredient = ingredientDao.findById(1);
-//        System.out.println(ingredient == null ? "no such ingredient" : ingredient.toString());
-//        System.out.println("\nвывод всех ингредиентов:");
-//        List<Ingredient> ingredients = ingredientDao.findAll();
-//        for (var i : ingredients) {
-//            System.out.println(i.toString());
-//        }
-//        System.out.println("\nдобавление трюфеля и кокоса");
-//        ingredient = new Ingredient("кокос");
-//        ingredientDao.insert(ingredient);
-//        ingredient = new Ingredient("трюфель");
-//        ingredientDao.insert(ingredient);
-//        ingredients = ingredientDao.findAll();
-//        for (var i : ingredients) {
-//            System.out.println(i.toString());
-//        }
-//        ingredient.setName("ТРЮФЕЛЬ");
-//        ingredientDao.update(ingredient);
-//        System.out.println("\nизменение названия трюфеля");
-//        ingredients = ingredientDao.findAll();
-//        for (var i : ingredients) {
-//            System.out.println(i.toString());
-//        }
-//        System.out.println("\nвывод кокоса по имени:");
-//        ingredient = ingredientDao.findIngredientByName("кокос");
-//        System.out.println(ingredient.toString());
-//        System.out.println("\nудаление кокоса через энтити и ТРЮФЕЛЯ через название:");
-//        ingredientDao.deleteByIngredient(ingredient);
-//        ingredientDao.deleteByName("ТРЮФЕЛЬ");
-//        ingredients = ingredientDao.findAll();
-//        for (var i : ingredients) {
-//            System.out.println(i.toString());
-//        }
-//        // ingredients tested
-//        System.out.println("\nвывод всех пицц:");
-//        Connection pizzaConnection = ConnectionCreator.createConnection();
-//        PizzaDaoImpl pizzaDao = new PizzaDaoImpl(pizzaConnection);
-//        List<Pizza> pizzas = pizzaDao.findAll();
-//        for (var i : pizzas) {
-//            System.out.println(i.toString());
-//        }
-//        System.out.println("\nдобавление мясной и домашней пиццы");
-//        Pizza pizza = new Pizza("мясная", new ArrayList<>(List.of(ingredientDao.findIngredientByName("бекон"), ingredientDao.findIngredientByName("курица"))), 1300);
-//        pizzaDao.insert(pizza);
-//        pizza = new Pizza("домашняя", new ArrayList<>(List.of(ingredientDao.findIngredientByName("сыр"), ingredientDao.findIngredientByName("помидор"))), 900);
-//        pizzaDao.insert(pizza);
-//        pizzas = pizzaDao.findAll();
-//        for (var i : pizzas) {
-//            System.out.println(i.toString());
-//        }
-//        Connection orderConnection = ConnectionCreator.createConnection();
-//        OrderDaoImpl orderDao = new OrderDaoImpl(orderConnection);
-//        System.out.println("\nвывод всех заказов:");
-//        List<Order> orders = orderDao.findAll();
-//        for (var i : orders) {
-//            System.out.println(i.toString());
-//        }
-//        System.out.println("\nдобавление двух заказов:");
-//        orderDao.insert(new Order(new ArrayList<>(List.of(pizzaDao.findPizzaByName("гавайская"), pizzaDao.findPizzaByName("мясная"))), OrderStatus.IN_PROCESS, 1));
-//        orderDao.insert(new Order(new ArrayList<>(List.of(pizzaDao.findPizzaByName("домашняя"))), OrderStatus.COMPLETED, 2));
-//        orderDao.insert(new Order(new ArrayList<>(List.of(pizzaDao.findPizzaByName("мясная"))), OrderStatus.IN_PROCESS, 2));
-//        orders = orderDao.findAll();
-//        for (var i : orders) {
-//            System.out.println(i.toString());
-//        }
-//        System.out.println("\nпоиск заказов пользователя со вторым id");
-//        orders = orderDao.findAllUserOrders(userDao.findById(2));
-//        for (var i : orders) {
-//            System.out.println(i.toString());
-//        }
-//        System.out.println("\nизменение статуса заказа:");
-//        orders.get(1).setOrderStatus(OrderStatus.REJECTED);
-//        orderDao.update(orders.get(1));
-//        orders = orderDao.findAll();
-//        for (var i : orders) {
-//            System.out.println(i.toString());
-//        }
-//        System.out.println("удаление добавленных заказов по id");
-//        orders = orderDao.findAllUserOrders(userDao.findById(1));
-//        for (var i : orders) {
-//            orderDao.deleteById(i.getId());
-//        }
-//        orders = orderDao.findAllUserOrders(userDao.findById(2));
-//        for (var i : orders) {
-//            orderDao.deleteById(i.getId());
-//        }
-//        orders = orderDao.findAll();
-//        for (var i : orders) {
-//            System.out.println(i.toString());
-//        }
-//        // orders tested
-//        System.out.println("\nудаление мясной пиццы по названию, изменение имени домашней и добавление в неё ананаса");
-//        pizzaDao.deleteByName("мясная");
-//        pizza.setName("деревенская");
-//        pizzaDao.update(pizza);
-//        pizzaDao.addIngredientInPizza(pizza, 89);
-//        pizzas = pizzaDao.findAll();
-//        for (var i : pizzas) {
-//            System.out.println(i.toString());
-//        }
-//        System.out.println("\nудаление деревенской пиццы по id");
-//        pizzaDao.deleteById(pizza.getId());
-//        pizzas = pizzaDao.findAll();
-//        for (var i : pizzas) {
-//            System.out.println(i.toString());
-//        }
-//        // pizzas tested
-//        orderConnection.close();
-//        userConnection.close();
-//        ingredientConnection.close();
-//        pizzaConnection.close();
+    public static void main(String[] args) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        User user = new User(UserRole.CLIENT, "abacaba", "kek");
+        user.setId(7);
+        String json = mapper.writeValueAsString(user);
+        System.out.println(json);
+        List<Ingredient> ingredients = new ArrayList<>(List.of(new Ingredient("ананас"),
+                new Ingredient("курица"),
+                new Ingredient("соус песто")));
+        ingredients.get(0).setId(89);
+        ingredients.get(1).setId(86);
+        ingredients.get(2).setId(92);
+        Pizza pizza = new Pizza("гавайская", ingredients, 1000);
+        pizza.setId(68);
+        json = mapper.writeValueAsString(pizza);
+        System.out.println(json);
+        List<Pizza> pizzas =  new ArrayList<>();
+        ingredients = new ArrayList<>(List.of(
+                new Ingredient("курица"), new Ingredient("ананас"), new Ingredient("соус песто")));
+        ingredients.get(0).setId(86);
+        ingredients.get(1).setId(89);
+        ingredients.get(2).setId(92);
+        pizza = new Pizza("гавайская", ingredients, 1000);
+        pizza.setId(68);
+        pizzas.add(pizza);
+        ingredients = new ArrayList<>(List.of(
+                new Ingredient("томатный соус"), new Ingredient("шампиньоны"), new Ingredient("охотничьи колбаски")));
+        ingredients.get(0).setId(91);
+        ingredients.get(1).setId(95);
+        ingredients.get(2).setId(96);
+        pizza = new Pizza("охотничья", ingredients, 800);
+        pizza.setId(69);
+        pizzas.add(pizza);
+        Order order = new Order(pizzas, OrderStatus.COMPLETED, 1);
+        json = mapper.writeValueAsString(order);
+        System.out.println(json);
     }
 }
