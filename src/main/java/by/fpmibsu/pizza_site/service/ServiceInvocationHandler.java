@@ -1,16 +1,17 @@
 package by.fpmibsu.pizza_site.service;
 
-import by.fpmibsu.pizza_site.dao.IngredientDao;
+import by.fpmibsu.pizza_site.dao.IngredientDaoImpl;
 import by.fpmibsu.pizza_site.exception.TransactionException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class ServiceInvocationHandler implements java.lang.reflect.InvocationHandler {
-    private final Service service;
-    private static final Logger logger = Logger.getLogger(IngredientDao.class);
-    public ServiceInvocationHandler(Service service) {
+    private final ServiceImpl service;
+    private static final Logger logger = LogManager.getLogger(IngredientDaoImpl.class);
+    public ServiceInvocationHandler(ServiceImpl service) {
         this.service = service;
     }
 

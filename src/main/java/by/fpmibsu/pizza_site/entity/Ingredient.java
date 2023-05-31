@@ -1,9 +1,12 @@
 package by.fpmibsu.pizza_site.entity;
+
+import java.util.Objects;
+
 public class Ingredient extends Entity {
     private String name;
-    static public final int ID_NOT_DEFINED = -1;
-    public Ingredient(int id, String name) {
-        this.id = id;
+
+    public Ingredient() {}
+    public Ingredient(String name) {
         this.name = name;
     }
 
@@ -15,7 +18,21 @@ public class Ingredient extends Entity {
     }
 
     @Override
+    public boolean equals(Object object) {
+        if (!super.equals(object)) {
+            return false;
+        }
+        Ingredient toCompare = (Ingredient) object;
+        return name.equals(toCompare.name);
+    }
+
+    @Override
     public String toString() {
         return "Ingredient [ id = " + id + " name = " + name + " ]";
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), name);
     }
 }
