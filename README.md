@@ -1,5 +1,6 @@
 # pizza-site
 #Описание
+
 pizza-site - это клиент-серверное приложение для пиццерии, позволяющее пользователям проссматривать каталог,
 делать заказ и отслеживать статус своего заказа, а персоналу видеть заказы клиентов, выполнять их и изменять
 их статус.
@@ -7,6 +8,7 @@ Use-case-diagram
 <img src="src/main/resources/use-case-diagram.png">
 
 #Технологии
+
 pizza-site - написано с использованием языков Java, React, TypeScript при помощи следующих библиотекех и фреймворков:
 1. log4j2 - библиотека для логирования
 2. Jacson - библиотека для JSON
@@ -14,8 +16,15 @@ pizza-site - написано с использованием языков Java,
 4. Apache Tomcat9 - контейнер сервлетов
 
 #Структура и Запуск
+
 Диаграмма классов
 <img src="src/main/resources/class-diagram.png">
+
+Диаграмма компонент
+<img src="src/main/resources/component_diagram.png">
+
+Диаграмма развёртования
+<img src="src/main/resources/unwrap_diagram.png">
 
 Для запуска приложения необходимо выполнить следующие шаги:
 1. Установить Apache Tomcat 9
